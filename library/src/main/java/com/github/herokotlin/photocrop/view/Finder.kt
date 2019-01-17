@@ -125,7 +125,6 @@ class Finder: FrameLayout, View.OnTouchListener {
                 val offsetY = y - lastTouchPoint.y
 
                 val distance = Math.sqrt((offsetX * offsetX + offsetY * offsetY).toDouble())
-                Log.d("photocrop1", "$distance $touchSlop")
                 if (distance > touchSlop) {
 
                     lastTouchPoint.x = x
@@ -172,7 +171,7 @@ class Finder: FrameLayout, View.OnTouchListener {
                 resizeCropAreaTimer = Runnable {
                     resizeCropArea()
                 }
-//                postDelayed(resizeCropAreaTimer, 1000)
+                postDelayed(resizeCropAreaTimer, 1000)
             }
 
         }

@@ -4,5 +4,6 @@
     <color name="photo_crop_finder_border_color">#FFF</color>
     <color name="photo_crop_finder_corner_line_color">#0F0</color>
     <color name="photo_crop_finder_corner_button_color">#440000FF</color>
-
+    <color name="photo_crop_grid_line_color">#88FFFFFF</color>
+    <color name="photo_crop_overlay_color">#BB000000</color>
 </resources>
