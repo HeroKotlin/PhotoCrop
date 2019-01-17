@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/topBorder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/photo_crop_finder_border_color"/>
+
+    <View
+        android:id="@+id/rightBorder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/photo_crop_finder_border_color"/>
+
+    <View
+        android:id="@+id/bottomBorder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/photo_crop_finder_border_color"/>
+
+    <View
+        android:id="@+id/leftBorder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/photo_crop_finder_border_color"/>
+
+    <View
+        android:id="@+id/topLeftHorizontalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/topLeftVerticalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_width"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/topRightHorizontalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/topRightVerticalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_width"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/bottomRightHorizontalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/bottomRightVerticalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_width"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/bottomLeftHorizontalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/bottomLeftVerticalLine"
+        android:layout_width="@dimen/photo_crop_finder_corner_line_width"
+        android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:background="@color/photo_crop_finder_corner_line_color"/>
+
+    <View
+        android:id="@+id/topLeftButton"
+        android:layout_width="@dimen/photo_crop_finder_corner_button_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
+        android:background="@color/photo_crop_finder_corner_button_color"/>
+
+    <View
+        android:id="@+id/topRightButton"
+        android:layout_width="@dimen/photo_crop_finder_corner_button_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
+        android:background="@color/photo_crop_finder_corner_button_color"/>
+
+    <View
+        android:id="@+id/bottomLeftButton"
+        android:layout_width="@dimen/photo_crop_finder_corner_button_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
+        android:background="@color/photo_crop_finder_corner_button_color"/>
+
+    <View
+        android:id="@+id/bottomRightButton"
+        android:layout_width="@dimen/photo_crop_finder_corner_button_size"
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
+        android:background="@color/photo_crop_finder_corner_button_color"/>
+
+</FrameLayout>

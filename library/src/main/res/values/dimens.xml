@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="photo_crop_finder_border_width">1dp</dimen>
+    <dimen name="photo_crop_finder_corner_line_width">5dp</dimen>
+    <dimen name="photo_crop_finder_corner_line_size">22dp</dimen>
+    <dimen name="photo_crop_finder_corner_button_size">44dp</dimen>
+
+</resources>
