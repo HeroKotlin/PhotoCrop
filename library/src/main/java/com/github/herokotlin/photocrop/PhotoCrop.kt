@@ -86,27 +86,62 @@ class PhotoCrop: FrameLayout {
             Util.updateView(gridView, rect.left, rect.top, rect.width(), rect.height())
         }
         finderView.onCropAreaResize = {
+            updateCropArea(finderView.normalizedCropArea)
+        }
 
-            // 小值
-            val oldRect = finderView.cropArea.toRect(width, height)
+        photoView.scaleType = PhotoView.ScaleType.FIT
+        photoView.onScaleChange = {
+            updateFinderMinSize()
+        }
 
-            // 大值
-            val cropArea = finderView.normalizedCropArea
-            val newRect = cropArea.toRect(width, height)
+        photoView.setImageResource(R.drawable.image)
+    }
 
-            // 谁更大就用谁作为缩放系数
-            val widthScale = newRect.width().toFloat() / oldRect.width()
-            val heightScale = newRect.height().toFloat() / oldRect.height()
+    private fun updateFinderMinSize() {
 
-            val oldValue = photoView.scale
-            val newValue = oldValue * Math.max(widthScale, heightScale)
+        finderView.updateMinSize(
+            photoView.maxScale / photoView.scale,
+            finderMinWidth,
+            finderMinHeight
+        )
 
-            if (oldValue != newValue) {
+    }
 
-                val animator = ValueAnimator.ofFloat(oldValue, newValue)
-                var lastValue = oldValue
+    // CropArea 完全覆盖 PhotoView
+    private fun getCropAreaByPhotoView(): CropArea {
 
-                photoView.startZoomAnimator(oldValue, newValue, 500, LinearInterpolator())
+        val imageOrigin = photoView.imageOrigin
+        val imageSize = photoView.imageSize
+
+        val left = Math.max(imageOrigin.x, 0)
+        val top = Math.max(imageOrigin.y, 0)
+
+        val right = Math.max(photoView.width - (imageOrigin.x + imageSize.width), 0)
+        val bottom = Math.max(photoView.height - (imageOrigin.y + imageSize.height), 0)
+
+        return CropArea(top, left, bottom, right)
+
+    }
+
+    private fun updateCropArea(cropArea: CropArea) {
+
+        val oldRect = finderView.cropArea.toRect(width, height)
+        val newRect = cropArea.toRect(width, height)
+
+        // 谁更大就用谁作为缩放系数
+        val widthScale = newRect.width() / oldRect.width()
+        val heightScale = newRect.height() / oldRect.height()
+        val scale = Math.max(widthScale, heightScale)
+
+        if (scale == 1) {
+            return
+        }
+
+        val oldValue = photoView.scale
+        val newValue = oldValue * scale
+        val animator = ValueAnimator.ofFloat(oldValue, newValue)
+
+        photoView.startZoomAnimator(oldValue, newValue, 500, LinearInterpolator())
 
 //                animator.duration = 500
 //                animator.addUpdateListener {
@@ -124,41 +159,6 @@ class PhotoCrop: FrameLayout {
 //                })
 //
 //                this.activeAnimator = animator
-
-            }
-
-        }
-
-        photoView.scaleType = PhotoView.ScaleType.FIT
-        photoView.onScaleChange = {
-            updateFinderMinSize()
-        }
-
-        photoView.setImageResource(R.drawable.image)
-    }
-
-    private fun getCropAreaByPhotoView(): CropArea {
-
-        val imageOrigin = photoView.imageOrigin
-        val imageSize = photoView.imageSize
-
-        val left = Math.max(imageOrigin.x, finderCornerLineWidth)
-        val top = Math.max(imageOrigin.y, finderCornerLineWidth)
-
-        val right = Math.max(photoView.width - (imageOrigin.x + imageSize.width), finderCornerLineWidth)
-        val bottom = Math.max(photoView.height - (imageOrigin.y + imageSize.height), finderCornerLineWidth)
-
-        return CropArea(top, left, bottom, right)
-
-    }
-
-    private fun updateFinderMinSize() {
-
-        finderView.updateMinSize(
-            photoView.maxScale / photoView.scale,
-            finderMinWidth,
-            finderMinHeight
-        )
 
     }
 

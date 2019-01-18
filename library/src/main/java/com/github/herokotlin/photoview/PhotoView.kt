@@ -301,8 +301,8 @@ class PhotoView : ImageView {
 
                 val from = scale
 
-                // 当与最小缩放值很近时，下次缩放到最大
-                val to = if (maxScale - from > 0.001) {
+                // 距离谁比较远就去谁
+                val to = if (maxScale - scale > scale - minScale) {
                     mImageScaleFocusPoint.set(x, y)
                     maxScale
                 }

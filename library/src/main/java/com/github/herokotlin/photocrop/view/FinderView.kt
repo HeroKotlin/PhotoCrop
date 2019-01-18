@@ -62,6 +62,14 @@ class FinderView: FrameLayout, View.OnTouchListener {
         resources.getDimensionPixelSize(R.dimen.photo_crop_finder_corner_button_size)
     }
 
+    private val maxWidth: Int by lazy {
+        resources.getDimensionPixelSize(R.dimen.photo_crop_finder_max_width)
+    }
+
+    private val maxHeight: Int by lazy {
+        resources.getDimensionPixelSize(R.dimen.photo_crop_finder_max_height)
+    }
+
     private val touchSlop: Float by lazy {
         ViewConfiguration.get(context).scaledTouchSlop.toFloat()
     }
@@ -171,7 +179,7 @@ class FinderView: FrameLayout, View.OnTouchListener {
                 resizeCropAreaTimer = Runnable {
                     resizeCropArea()
                 }
-                postDelayed(resizeCropAreaTimer, 1000)
+                postDelayed(resizeCropAreaTimer, 500)
             }
 
         }
@@ -189,6 +197,16 @@ class FinderView: FrameLayout, View.OnTouchListener {
 
         if (cropHeight > h) {
             cropHeight = h - cornerButtonSize - 2 * cornerLineWidth
+            cropWidth = cropHeight * cropRatio
+        }
+
+        if (maxWidth > 0 && cropWidth > maxWidth) {
+            cropWidth = maxWidth
+            cropHeight = cropWidth / cropRatio
+        }
+
+        if (maxHeight > 0 && cropHeight > maxHeight) {
+            cropHeight = maxHeight
             cropWidth = cropHeight * cropRatio
         }
 
