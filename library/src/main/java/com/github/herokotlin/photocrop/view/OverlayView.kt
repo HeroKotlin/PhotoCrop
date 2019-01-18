@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import com.github.herokotlin.photocrop.R
 
-class Overlay: View {
+class OverlayView: View {
 
     constructor(context: Context) : super(context) {
         init()

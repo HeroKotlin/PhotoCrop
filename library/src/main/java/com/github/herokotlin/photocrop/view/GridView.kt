@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.R
 import kotlinx.android.synthetic.main.photo_crop_grid.view.*
 
-class Grid: FrameLayout {
+class GridView: FrameLayout {
 
     private val lineWidth: Int by lazy {
         resources.getDimensionPixelSize(R.dimen.photo_crop_grid_line_width)

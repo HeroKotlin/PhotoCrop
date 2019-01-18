@@ -12,9 +12,10 @@ import android.widget.FrameLayout
 
 import com.github.herokotlin.photocrop.R
 import com.github.herokotlin.photocrop.model.CropArea
+import com.github.herokotlin.photocrop.util.Util
 import kotlinx.android.synthetic.main.photo_crop_finder.view.*
 
-class Finder: FrameLayout, View.OnTouchListener {
+class FinderView: FrameLayout, View.OnTouchListener {
 
     lateinit var onCropAreaChange: () -> Unit
     lateinit var onCropAreaResize: () -> Unit
@@ -184,11 +185,16 @@ class Finder: FrameLayout, View.OnTouchListener {
 
         super.onSizeChanged(w, h, oldw, oldh)
 
-        val cropWidth = w - cornerButtonSize - 2 * cornerLineWidth
-        val cropHeight = cropWidth / cropRatio
+        var cropWidth = w - cornerButtonSize - 2 * cornerLineWidth
+        var cropHeight = cropWidth / cropRatio
+
+        if (cropHeight > h) {
+            cropHeight = h - cornerButtonSize - 2 * cornerLineWidth
+            cropWidth = cropHeight * cropRatio
+        }
 
         val vertical = (h - cropHeight) / 2
-        val horizontal = cornerButtonSize / 2 + cornerLineWidth
+        val horizontal = (w - cropWidth) / 2
 
         normalizedCropArea = CropArea(vertical, horizontal, vertical, horizontal)
 
@@ -206,7 +212,9 @@ class Finder: FrameLayout, View.OnTouchListener {
 
     private fun resizeCropArea() {
         removeResizeCropAreaTimer()
-        onCropAreaResize()
+        if (visibility == View.VISIBLE) {
+            onCropAreaResize()
+        }
     }
 
     private fun update() {
@@ -218,37 +226,27 @@ class Finder: FrameLayout, View.OnTouchListener {
 
         val halfButtonSize = cornerButtonSize / 2
 
-        updateView(topBorder, left, top - borderWidth, right - left, borderWidth)
-        updateView(rightBorder, right, top, borderWidth, bottom - top)
-        updateView(bottomBorder, left, bottom, right - left, borderWidth)
-        updateView(leftBorder, left - borderWidth, top, borderWidth, bottom - top)
+        Util.updateView(topBorder, left, top - borderWidth, right - left, borderWidth)
+        Util.updateView(rightBorder, right, top, borderWidth, bottom - top)
+        Util.updateView(bottomBorder, left, bottom, right - left, borderWidth)
+        Util.updateView(leftBorder, left - borderWidth, top, borderWidth, bottom - top)
 
-        updateView(topLeftButton, left - cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
-        updateView(topLeftHorizontalLine, left - cornerLineWidth, top - cornerLineWidth)
-        updateView(topLeftVerticalLine, left - cornerLineWidth, top - cornerLineWidth)
+        Util.updateView(topLeftButton, left - cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
+        Util.updateView(topLeftHorizontalLine, left - cornerLineWidth, top - cornerLineWidth)
+        Util.updateView(topLeftVerticalLine, left - cornerLineWidth, top - cornerLineWidth)
 
-        updateView(topRightButton, right + cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
-        updateView(topRightHorizontalLine, right + cornerLineWidth - cornerLineSize, top - cornerLineWidth)
-        updateView(topRightVerticalLine, right, top - cornerLineWidth)
+        Util.updateView(topRightButton, right + cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
+        Util.updateView(topRightHorizontalLine, right + cornerLineWidth - cornerLineSize, top - cornerLineWidth)
+        Util.updateView(topRightVerticalLine, right, top - cornerLineWidth)
 
-        updateView(bottomRightButton, right + cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
-        updateView(bottomRightHorizontalLine, right + cornerLineWidth - cornerLineSize, bottom)
-        updateView(bottomRightVerticalLine, right, bottom + cornerLineWidth - cornerLineSize)
+        Util.updateView(bottomRightButton, right + cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
+        Util.updateView(bottomRightHorizontalLine, right + cornerLineWidth - cornerLineSize, bottom)
+        Util.updateView(bottomRightVerticalLine, right, bottom + cornerLineWidth - cornerLineSize)
 
-        updateView(bottomLeftButton, left - cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
-        updateView(bottomLeftHorizontalLine, left - cornerLineWidth, bottom)
-        updateView(bottomLeftVerticalLine, left - cornerLineWidth, bottom + cornerLineWidth - cornerLineSize)
+        Util.updateView(bottomLeftButton, left - cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
+        Util.updateView(bottomLeftHorizontalLine, left - cornerLineWidth, bottom)
+        Util.updateView(bottomLeftVerticalLine, left - cornerLineWidth, bottom + cornerLineWidth - cornerLineSize)
 
-    }
-
-    private fun updateView(view: View, x: Int, y: Int, width: Int, height: Int) {
-        updateView(view, x, y)
-        view.layoutParams = LayoutParams(width, height)
-    }
-
-    private fun updateView(view: View, x: Int, y: Int) {
-        view.x = x.toFloat()
-        view.y = y.toFloat()
     }
 
 }
