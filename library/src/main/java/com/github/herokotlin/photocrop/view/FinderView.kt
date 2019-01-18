@@ -30,7 +30,6 @@ class FinderView: FrameLayout, View.OnTouchListener {
                 return
             }
 
-            Log.d("photocrop", "$cropArea")
             field = value
 
             update()
