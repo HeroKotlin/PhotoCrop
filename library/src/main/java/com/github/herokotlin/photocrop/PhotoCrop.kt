@@ -17,6 +17,11 @@ class PhotoCrop: FrameLayout {
 
     private var cropArea = CropArea.zero
 
+        set(value) {
+            field = value
+            finderView.cropArea = value
+        }
+
     var isCropping = false
 
         set(value) {
@@ -29,10 +34,6 @@ class PhotoCrop: FrameLayout {
 
             if (value) {
 
-                Util.showView(overlayView)
-                Util.showView(finderView)
-                Util.showView(gridView)
-
                 overlayView.alpha = 0f
                 finderView.alpha = 0f
                 gridView.alpha = 0f
@@ -41,14 +42,82 @@ class PhotoCrop: FrameLayout {
 
                 // 初始化裁剪区域，尺寸和当前图片一样大
                 // 这样就会有一个从大到小的动画
-                cropArea = getCropAreaByPhotoView()
+                val fromCropArea = getCropAreaByPhotoView()
+                val toCropArea = finderView.normalizedCropArea
+                val offsetCropArea = toCropArea.minus(fromCropArea)
+
+                val fromPadding = CropArea.zero
+                val toPadding = toCropArea
+                val offsetPadding = toPadding.minus(fromPadding)
+
+                cropArea = fromCropArea
+
+                var lastValue = 0f
+                val animator = ValueAnimator.ofFloat(lastValue, 1f)
+
+                animator.duration = 500
+                animator.addUpdateListener {
+
+                    val value = it.animatedValue as Float
+                    val factor = value - lastValue
+
+                    overlayView.alpha = value
+                    finderView.alpha = value
+                    gridView.alpha = value
+
+                    cropArea = cropArea.add(offsetCropArea.multiply(factor))
+
+                    val padding = offsetPadding.multiply(factor)
+                    photoView.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+                    photoView.reset()
+
+                    lastValue = value
+
+                }
+                animator.addListener(object: AnimatorListenerAdapter() {
+                    // 动画被取消，onAnimationEnd() 也会被调用
+                    override fun onAnimationEnd(animation: android.animation.Animator?) {
+                        if (animation == activeAnimator) {
+                            activeAnimator = null
+                        }
+                    }
+                })
+                animator.start()
+
+                this.activeAnimator = animator
+
             }
             else {
 
                 photoView.scaleType = PhotoView.ScaleType.FIT
 
-                // 从选定的裁剪区域到图片区域的动画
+                // 计算两个 CropArea 之间的位移量
+                val offset = getCropAreaByPhotoView().minus(cropArea)
 
+                // 从选定的裁剪区域到图片区域的动画
+                var lastValue = 1f
+                val animator = ValueAnimator.ofFloat(lastValue, 0f)
+
+                animator.duration = 500
+                animator.addUpdateListener {
+                    val value = it.animatedValue as Float
+                    overlayView.alpha = value
+                    finderView.alpha = value
+                    gridView.alpha = value
+
+                    lastValue = value
+                }
+                animator.addListener(object: AnimatorListenerAdapter() {
+                    // 动画被取消，onAnimationEnd() 也会被调用
+                    override fun onAnimationEnd(animation: android.animation.Animator?) {
+                        if (animation == activeAnimator) {
+                            activeAnimator = null
+                        }
+                    }
+                })
+                animator.start()
+
+                this.activeAnimator = animator
             }
         }
 

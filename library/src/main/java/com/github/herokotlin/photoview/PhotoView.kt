@@ -356,7 +356,7 @@ class PhotoView : ImageView {
         mImageWidth = if (drawable != null) drawable.intrinsicWidth.toFloat() else 0f
         mImageHeight = if (drawable != null) drawable.intrinsicHeight.toFloat() else 0f
 
-        updateBaseMatrix()
+        reset()
 
     }
 
@@ -629,7 +629,7 @@ class PhotoView : ImageView {
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        updateBaseMatrix()
+        reset()
     }
 
     /**
@@ -713,7 +713,7 @@ class PhotoView : ImageView {
         }
     }
 
-    private fun updateBaseMatrix() {
+    fun reset() {
 
         if (mImageWidth > 0 && mImageHeight > 0) {
 

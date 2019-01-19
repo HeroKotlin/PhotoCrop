@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.R
 import kotlinx.android.synthetic.main.photo_crop_grid.view.*
 
-class GridView: FrameLayout {
+internal class GridView: FrameLayout {
 
     private val lineWidth: Int by lazy {
         resources.getDimensionPixelSize(R.dimen.photo_crop_grid_line_width)
@@ -36,6 +36,10 @@ class GridView: FrameLayout {
     }
 
     private fun update() {
+
+        if (width == 0 || height == 0) {
+            return
+        }
 
         val horizontalLines = listOf(horizontalLine1, horizontalLine2)
         val verticalLines = listOf(verticalLine1, verticalLine2)

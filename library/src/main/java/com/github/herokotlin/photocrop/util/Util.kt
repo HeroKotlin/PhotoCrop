@@ -15,12 +15,8 @@ internal object Util {
         view.y = y.toFloat()
     }
 
-    fun showView(view: View) {
-        view.visibility = View.VISIBLE
-    }
-
-    fun hideView(view: View) {
-        view.visibility = View.GONE
+    fun isVisible(view: View): Boolean {
+        return view.alpha > 0
     }
 
 }

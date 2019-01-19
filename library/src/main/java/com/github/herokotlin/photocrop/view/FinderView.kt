@@ -15,7 +15,7 @@ import com.github.herokotlin.photocrop.model.CropArea
 import com.github.herokotlin.photocrop.util.Util
 import kotlinx.android.synthetic.main.photo_crop_finder.view.*
 
-class FinderView: FrameLayout, View.OnTouchListener {
+internal class FinderView: FrameLayout, View.OnTouchListener {
 
     lateinit var onCropAreaChange: () -> Unit
     lateinit var onCropAreaResize: () -> Unit
@@ -110,7 +110,7 @@ class FinderView: FrameLayout, View.OnTouchListener {
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
 
-        if (view == null || event == null) {
+        if (view == null || event == null || !Util.isVisible(this)) {
             return false
         }
 
@@ -216,7 +216,12 @@ class FinderView: FrameLayout, View.OnTouchListener {
         normalizedCropArea = CropArea(vertical, horizontal, vertical, horizontal)
 
         // 重新计算裁剪区域
-        resizeCropArea()
+        if (oldw > 0 && oldh > 0) {
+            resizeCropArea()
+        }
+        else {
+            update()
+        }
 
     }
 
@@ -229,12 +234,16 @@ class FinderView: FrameLayout, View.OnTouchListener {
 
     private fun resizeCropArea() {
         removeResizeCropAreaTimer()
-        if (visibility == View.VISIBLE) {
+        if (Util.isVisible(this)) {
             onCropAreaResize()
         }
     }
 
     private fun update() {
+
+        if (width == 0 || height == 0) {
+            return
+        }
 
         val left = cropArea.left
         val top = cropArea.top
