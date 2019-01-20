@@ -52,10 +52,6 @@ class PhotoCrop: FrameLayout {
 
             if (value) {
 
-                overlayView.alpha = 0f
-                finderView.alpha = 0f
-                gridView.alpha = 0f
-
                 photoView.scaleType = PhotoView.ScaleType.FILL
 
                 fromCropArea = getCropAreaByPhotoView()
@@ -127,8 +123,7 @@ class PhotoCrop: FrameLayout {
             offsetPadding = toPadding.minus(fromPadding)
 
             startAnimation(animation) {
-                photoView.minScale = photoView.getMinScale(toScale)
-                photoView.maxScale = photoView.getMaxScale(toScale)
+                photoView.updateLimitScale()
             }
 
             Log.d("photocrop", "$fromPadding $toPadding")
@@ -184,6 +179,8 @@ class PhotoCrop: FrameLayout {
     }
 
     private fun startAnimation(update: (Float) -> Unit, complete: (() -> Unit)? = null) {
+
+        this.activeAnimator?.cancel()
 
         val animator = ValueAnimator.ofFloat(0f, 1f)
 
