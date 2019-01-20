@@ -3,6 +3,7 @@ package com.github.herokotlin.photocrop
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -52,6 +53,8 @@ class PhotoCrop: FrameLayout {
 
             if (value) {
 
+                foregroundView.alpha = 1f
+
                 photoView.scaleType = PhotoView.ScaleType.FILL
 
                 fromCropArea = getCropAreaByPhotoView()
@@ -81,6 +84,8 @@ class PhotoCrop: FrameLayout {
 
             }
             else {
+
+                foregroundView.alpha = 0f
 
                 photoView.scaleType = PhotoView.ScaleType.FIT
 
@@ -162,13 +167,16 @@ class PhotoCrop: FrameLayout {
 
         finderView.onCropAreaChange = {
             val rect = finderView.cropArea.toRect(width, height)
+            Util.updateView(foregroundView, rect.left, rect.top, rect.width(), rect.height())
             Util.updateView(gridView, rect.left, rect.top, rect.width(), rect.height())
         }
         finderView.onCropAreaResize = {
             updateCropArea(finderView.normalizedCropArea)
         }
-
         photoView.scaleType = PhotoView.ScaleType.FIT
+        photoView.onDragEnd = {
+            Log.d("photocrop", "${photoView.imageOrigin} ${photoView.paddingTop} ${photoView.paddingLeft}")
+        }
         photoView.onScaleChange = {
             updateFinderMinSize()
         }
