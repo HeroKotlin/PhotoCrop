@@ -5,25 +5,18 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
+import com.github.herokotlin.photocrop.R
+import com.github.herokotlin.photocrop.util.Util
+import com.github.herokotlin.photoview.PhotoView
+import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 
-class ForegroundView: View {
+class ForegroundView: FrameLayout {
 
-    var bitmap: Bitmap? = null
-
-        set(value) {
-
-            if (field == value) {
-                return
-            }
-
-            field = value
-
-            invalidate()
-
-        }
-
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    lateinit var photoView: PhotoView
 
     constructor(context: Context) : super(context) {
         init()
@@ -38,17 +31,25 @@ class ForegroundView: View {
     }
 
     private fun init() {
-
+        LayoutInflater.from(context).inflate(R.layout.photo_crop_foreground, this)
     }
 
-    override fun onDraw(canvas: Canvas) {
+    fun bindPhotoView(photoView: PhotoView) {
+        this.photoView = photoView
+        updateImageSize()
+        updateImageOrigin()
+    }
 
-        super.onDraw(canvas)
+    fun updateImageSize() {
+        val size = photoView.imageSize
+        Log.d("photocrop1", "size $size")
+        Util.updateSize(imageView, size.width, size.height)
+    }
 
-        bitmap?.let {
-            canvas.drawBitmap(it, 0f, 0f, paint)
-        }
-
+    fun updateImageOrigin() {
+        val origin = photoView.imageOrigin
+        Util.updateOrigin(imageView, origin.x, origin.y)
+        Log.d("photocrop1", "origin $origin")
     }
 
 }

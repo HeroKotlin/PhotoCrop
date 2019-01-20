@@ -13,6 +13,7 @@ import com.github.herokotlin.photocrop.model.CropArea
 import com.github.herokotlin.photocrop.util.Util
 import com.github.herokotlin.photoview.PhotoView
 import kotlinx.android.synthetic.main.photo_crop.view.*
+import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 
 class PhotoCrop: FrameLayout {
 
@@ -173,15 +174,23 @@ class PhotoCrop: FrameLayout {
         finderView.onCropAreaResize = {
             updateCropArea(finderView.normalizedCropArea)
         }
+
+        foregroundView.bindPhotoView(photoView)
+
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onDragEnd = {
             Log.d("photocrop", "${photoView.imageOrigin} ${photoView.paddingTop} ${photoView.paddingLeft}")
         }
         photoView.onScaleChange = {
             updateFinderMinSize()
+            foregroundView.updateImageSize()
+        }
+        photoView.onPositionChange = {
+            foregroundView.updateImageOrigin()
         }
 
         photoView.setImageResource(R.drawable.image)
+        foregroundView.imageView.setImageResource(R.drawable.image)
     }
 
     private fun startAnimation(update: (Float) -> Unit, complete: (() -> Unit)? = null) {

@@ -255,21 +255,21 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         Util.updateView(bottomBorder, left, bottom, right - left, borderWidth)
         Util.updateView(leftBorder, left - borderWidth, top, borderWidth, bottom - top)
 
-        Util.updateView(topLeftButton, left - cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
-        Util.updateView(topLeftHorizontalLine, left - cornerLineWidth, top - cornerLineWidth)
-        Util.updateView(topLeftVerticalLine, left - cornerLineWidth, top - cornerLineWidth)
+        Util.updateOrigin(topLeftButton, left - cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(topLeftHorizontalLine, left - cornerLineWidth, top - cornerLineWidth)
+        Util.updateOrigin(topLeftVerticalLine, left - cornerLineWidth, top - cornerLineWidth)
 
-        Util.updateView(topRightButton, right + cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
-        Util.updateView(topRightHorizontalLine, right + cornerLineWidth - cornerLineSize, top - cornerLineWidth)
-        Util.updateView(topRightVerticalLine, right, top - cornerLineWidth)
+        Util.updateOrigin(topRightButton, right + cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(topRightHorizontalLine, right + cornerLineWidth - cornerLineSize, top - cornerLineWidth)
+        Util.updateOrigin(topRightVerticalLine, right, top - cornerLineWidth)
 
-        Util.updateView(bottomRightButton, right + cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
-        Util.updateView(bottomRightHorizontalLine, right + cornerLineWidth - cornerLineSize, bottom)
-        Util.updateView(bottomRightVerticalLine, right, bottom + cornerLineWidth - cornerLineSize)
+        Util.updateOrigin(bottomRightButton, right + cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(bottomRightHorizontalLine, right + cornerLineWidth - cornerLineSize, bottom)
+        Util.updateOrigin(bottomRightVerticalLine, right, bottom + cornerLineWidth - cornerLineSize)
 
-        Util.updateView(bottomLeftButton, left - cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
-        Util.updateView(bottomLeftHorizontalLine, left - cornerLineWidth, bottom)
-        Util.updateView(bottomLeftVerticalLine, left - cornerLineWidth, bottom + cornerLineWidth - cornerLineSize)
+        Util.updateOrigin(bottomLeftButton, left - cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(bottomLeftHorizontalLine, left - cornerLineWidth, bottom)
+        Util.updateOrigin(bottomLeftVerticalLine, left - cornerLineWidth, bottom + cornerLineWidth - cornerLineSize)
 
     }
 

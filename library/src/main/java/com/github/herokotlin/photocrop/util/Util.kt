@@ -6,13 +6,17 @@ import android.widget.FrameLayout
 internal object Util {
 
     fun updateView(view: View, x: Int, y: Int, width: Int, height: Int) {
-        updateView(view, x, y)
-        view.layoutParams = FrameLayout.LayoutParams(width, height)
+        updateOrigin(view, x, y)
+        updateSize(view, width, height)
     }
 
-    fun updateView(view: View, x: Int, y: Int) {
+    fun updateOrigin(view: View, x: Int, y: Int) {
         view.x = x.toFloat()
         view.y = y.toFloat()
+    }
+
+    fun updateSize(view: View, width: Int, height: Int) {
+        view.layoutParams = FrameLayout.LayoutParams(width, height)
     }
 
     fun isVisible(view: View): Boolean {
