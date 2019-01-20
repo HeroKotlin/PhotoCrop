@@ -3,7 +3,6 @@ package com.github.herokotlin.photocrop.view
 import android.content.Context
 import android.graphics.Point
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -110,7 +109,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
 
-        if (view == null || event == null || !Util.isVisible(this)) {
+        if (view == null || event == null || !Util.isVisible(this) || resizeCropAreaTimer != null) {
             return false
         }
 
@@ -122,7 +121,6 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         when (event.actionMasked) {
 
             MotionEvent.ACTION_DOWN -> {
-                removeResizeCropAreaTimer()
                 lastTouchPoint.x = x
                 lastTouchPoint.y = y
             }

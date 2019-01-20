@@ -35,7 +35,7 @@ class PhotoCrop: FrameLayout {
             var fromCropArea = cropArea
             var toCropArea = fromCropArea
 
-            var fromPadding = CropArea(photoView.paddingTop, photoView.paddingLeft, photoView.paddingBottom, photoView.paddingRight)
+            val fromPadding = CropArea(photoView.paddingTop, photoView.paddingLeft, photoView.paddingBottom, photoView.paddingRight)
             var toPadding = CropArea.zero
 
             val fromScale = photoView.scale
@@ -47,10 +47,8 @@ class PhotoCrop: FrameLayout {
             var offsetPadding = CropArea.zero
             var offsetCropArea = CropArea.zero
 
-            var readValue = { }
-            var animation: (Float, Float) -> Unit = { value, factor ->
-
-            }
+            val readValue: () -> Unit
+            val animation: (Float) -> Unit
 
             if (value) {
 
@@ -66,11 +64,13 @@ class PhotoCrop: FrameLayout {
                 toPadding = toCropArea
 
                 readValue = {
+
                     toScale = photoView.scale
                     toOrigin = photoView.imageOrigin
+
                 }
 
-                animation = { value, factor ->
+                animation = { value ->
 
                     overlayView.alpha = value
                     finderView.alpha = value
@@ -89,12 +89,15 @@ class PhotoCrop: FrameLayout {
                 photoView.scaleType = PhotoView.ScaleType.FIT
 
                 readValue = {
+
                     toScale = photoView.scale
                     toOrigin = photoView.imageOrigin
+
                     toCropArea = getCropAreaByPhotoView()
+
                 }
 
-                animation = { value, factor ->
+                animation = { value ->
 
                     val alpha = 1 - value
 
@@ -123,7 +126,10 @@ class PhotoCrop: FrameLayout {
             offsetCropArea = toCropArea.minus(fromCropArea)
             offsetPadding = toPadding.minus(fromPadding)
 
-            startAnimation(animation)
+            startAnimation(animation) {
+                photoView.minScale = photoView.getMinScale(toScale)
+                photoView.maxScale = photoView.getMaxScale(toScale)
+            }
 
             Log.d("photocrop", "$fromPadding $toPadding")
 
@@ -177,24 +183,22 @@ class PhotoCrop: FrameLayout {
         photoView.setImageResource(R.drawable.image)
     }
 
-    private fun startAnimation(update: (Float, Float) -> Unit) {
+    private fun startAnimation(update: (Float) -> Unit, complete: (() -> Unit)? = null) {
 
-        var lastValue = 0f
-        val animator = ValueAnimator.ofFloat(lastValue, 1f)
+        val animator = ValueAnimator.ofFloat(0f, 1f)
 
         animator.duration = 500
         animator.addUpdateListener {
 
             val value = it.animatedValue as Float
 
-            update(value, value - lastValue)
-
-            lastValue = value
+            update(value)
 
         }
         animator.addListener(object: AnimatorListenerAdapter() {
             // 动画被取消，onAnimationEnd() 也会被调用
             override fun onAnimationEnd(animation: android.animation.Animator?) {
+                complete?.invoke()
                 if (animation == activeAnimator) {
                     activeAnimator = null
                 }
@@ -234,40 +238,34 @@ class PhotoCrop: FrameLayout {
 
     private fun updateCropArea(cropArea: CropArea) {
 
-        val oldRect = finderView.cropArea.toRect(width, height)
-        val newRect = cropArea.toRect(width, height)
+        val fromCropArea = finderView.cropArea
+        val toCropArea = cropArea
+
+        val oldRect = fromCropArea.toRect(width, height)
+        val newRect = toCropArea.toRect(width, height)
 
         // 谁更大就用谁作为缩放系数
-        val widthScale = newRect.width() / oldRect.width()
-        val heightScale = newRect.height() / oldRect.height()
+        val widthScale = newRect.width().toFloat() / oldRect.width()
+        val heightScale = newRect.height().toFloat() / oldRect.height()
         val scale = Math.max(widthScale, heightScale)
 
-        if (scale == 1) {
+        if (scale == 1f) {
             return
         }
 
-        val oldValue = photoView.scale
-        val newValue = oldValue * scale
-        val animator = ValueAnimator.ofFloat(oldValue, newValue)
+        val offsetCropArea = toCropArea.minus(fromCropArea)
 
-        photoView.startZoomAnimator(oldValue, newValue, 500, LinearInterpolator())
+        val fromScale = photoView.scale
+        val toScale = fromScale * scale
 
-//                animator.duration = 500
-//                animator.addUpdateListener {
-//                    val value = it.animatedValue as Float
-//
-//                    lastValue = value
-//                }
-//                animator.addListener(object: AnimatorListenerAdapter() {
-//                    // 动画被取消，onAnimationEnd() 也会被调用
-//                    override fun onAnimationEnd(animation: android.animation.Animator?) {
-//                        if (animation == activeAnimator) {
-//                            activeAnimator = null
-//                        }
-//                    }
-//                })
-//
-//                this.activeAnimator = animator
+        startAnimation({ value ->
+
+            this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
+
+        })
+
+        photoView.startZoomAnimator(fromScale, toScale, 500, LinearInterpolator())
+
 
     }
 

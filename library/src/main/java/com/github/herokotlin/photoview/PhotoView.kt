@@ -779,6 +779,14 @@ class PhotoView : ImageView {
 
     }
 
+    fun getMaxScale(scale: Float): Float {
+        return if (3 * scale < 1) 1f else (3 * scale)
+    }
+
+    fun getMinScale(scale: Float): Float {
+        return scale
+    }
+
     private fun updateBaseMatrix() {
 
         if (mImageWidth > 0 && mImageHeight > 0) {
@@ -789,8 +797,8 @@ class PhotoView : ImageView {
 
             imageMatrix = mDrawMatrix
 
-            maxScale = if (3 * zoomScale < 1) 1f else (3 * zoomScale)
-            minScale = zoomScale
+            maxScale = getMaxScale(zoomScale)
+            minScale = getMinScale(zoomScale)
 
             onReset?.invoke()
 
