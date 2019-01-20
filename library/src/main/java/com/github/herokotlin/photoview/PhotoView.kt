@@ -287,7 +287,7 @@ class PhotoView : ImageView {
                     }
 
                     if (vx != 0f || vy != 0f) {
-                        startFlingAnimator(vx, vy, flingInterpolator)
+                        startFlingAnimation(vx, vy, flingInterpolator)
                         return true
                     }
 
@@ -326,7 +326,7 @@ class PhotoView : ImageView {
                     minScale
                 }
 
-                startZoomAnimator(from, to, zoomDuration, zoomInterpolator)
+                startZoomAnimation(from, to, zoomDuration, zoomInterpolator)
 
             }
         })
@@ -392,11 +392,11 @@ class PhotoView : ImageView {
         }
 
         if (to != from) {
-            startZoomAnimator(from, to, bounceDuration, bounceInterpolator)
+            startZoomAnimation(from, to, bounceDuration, bounceInterpolator)
         }
         else if (bounce) {
             checkImageBounds { dx, dy ->
-                startTranslateAnimator(dx, dy, bounceInterpolator)
+                startTranslateAnimation(dx, dy, bounceInterpolator)
             }
         }
 
@@ -419,7 +419,7 @@ class PhotoView : ImageView {
 
     }
 
-    fun startZoomAnimator(from: Float, to: Float, duration: Long, interpolator: TimeInterpolator) {
+    fun startZoomAnimation(from: Float, to: Float, duration: Long, interpolator: TimeInterpolator) {
 
         mZoomAnimator?.cancel()
 
@@ -448,7 +448,7 @@ class PhotoView : ImageView {
         var deltaY = 0f
 
         // 计算缩放后的位移
-        updateForRead({ baseMatrix, changeMatrix ->
+        updateForRead({ _, changeMatrix ->
             val scale = to / from
             changeMatrix.postScale(scale, scale, mImageScaleFocusPoint.x, mImageScaleFocusPoint.y)
         }) {
@@ -459,7 +459,7 @@ class PhotoView : ImageView {
         }
 
         if (deltaX != 0f || deltaY != 0f) {
-            startTranslateAnimator(deltaX, deltaY, interpolator)
+            startTranslateAnimation(deltaX, deltaY, interpolator)
         }
 
 
@@ -469,7 +469,7 @@ class PhotoView : ImageView {
 
     }
 
-    private fun startFlingAnimator(vx: Float, vy: Float, interpolator: TimeInterpolator) {
+    private fun startFlingAnimation(vx: Float, vy: Float, interpolator: TimeInterpolator) {
 
         mTranslateAnimator?.cancel()
 
@@ -493,7 +493,7 @@ class PhotoView : ImageView {
                 if (animation == mTranslateAnimator) {
                     mTranslateAnimator = null
                     checkImageBounds { dx, dy ->
-                        startTranslateAnimator(dx, dy, interpolator)
+                        startTranslateAnimation(dx, dy, interpolator)
                     }
                 }
             }
@@ -503,7 +503,7 @@ class PhotoView : ImageView {
 
     }
 
-    fun startTranslateAnimator(deltaX: Float, deltaY: Float, interpolator: TimeInterpolator) {
+    fun startTranslateAnimation(deltaX: Float, deltaY: Float, interpolator: TimeInterpolator) {
 
         mTranslateAnimator?.cancel()
 

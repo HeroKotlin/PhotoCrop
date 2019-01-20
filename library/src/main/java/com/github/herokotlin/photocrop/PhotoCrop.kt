@@ -126,10 +126,8 @@ class PhotoCrop: FrameLayout {
                 photoView.updateLimitScale()
             }
 
-            Log.d("photocrop", "$fromPadding $toPadding")
-
-            photoView.startZoomAnimator(fromScale, toScale, 500, LinearInterpolator())
-            photoView.startTranslateAnimator((toOrigin.x - fromOrigin.x).toFloat(), (toOrigin.y - fromOrigin.y).toFloat(), LinearInterpolator())
+            photoView.startZoomAnimation(fromScale, toScale, 500, LinearInterpolator())
+            photoView.startTranslateAnimation((toOrigin.x - fromOrigin.x).toFloat(), (toOrigin.y - fromOrigin.y).toFloat(), LinearInterpolator())
 
         }
 
@@ -252,8 +250,10 @@ class PhotoCrop: FrameLayout {
 
         val offsetCropArea = toCropArea.minus(fromCropArea)
 
+        Log.d("photocrop", "origin ${photoView.imageOrigin}")
         val fromScale = photoView.scale
         val toScale = fromScale * scale
+
 
         startAnimation({ value ->
 
@@ -261,8 +261,8 @@ class PhotoCrop: FrameLayout {
 
         })
 
-        photoView.startZoomAnimator(fromScale, toScale, 500, LinearInterpolator())
-
+        photoView.startZoomAnimation(fromScale, toScale, 500, LinearInterpolator())
+        photoView.startTranslateAnimation(offsetCropArea.left.toFloat(), offsetCropArea.top.toFloat(), LinearInterpolator())
 
     }
 
