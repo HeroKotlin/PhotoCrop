@@ -104,16 +104,32 @@ class PhotoView : ImageView {
 
     var maxScale = 1f
 
-    var scale = 1f
-
-    var imageOrigin: Point
+    var scale: Float
 
         get() {
-            return Point(getValue(imageMatrix, Matrix.MTRANS_X).toInt(), getValue(imageMatrix, Matrix.MTRANS_Y).toInt())
+            return getValue(mDrawMatrix, Matrix.MSCALE_X)
         }
 
         set(value) {
             // 只读
+        }
+
+    var imageOrigin: Point
+
+        get() {
+            return Point(
+                getValue(mDrawMatrix, Matrix.MTRANS_X).toInt(),
+                getValue(mDrawMatrix, Matrix.MTRANS_Y).toInt()
+            )
+        }
+
+        set(value) {
+            // 只读
+            val dx = value.x - getValue(mBaseMatrix, Matrix.MTRANS_X)
+            val dy = value.y - getValue(mBaseMatrix, Matrix.MTRANS_Y)
+            mChangeMatrix.setTranslate(dx, dy)
+            updateDrawMatrix()
+            imageMatrix = mDrawMatrix
         }
 
     var imageSize: Size
@@ -221,7 +237,7 @@ class PhotoView : ImageView {
 
                 translate(focusPoint.x - lastFocusPoint.x, focusPoint.y - lastFocusPoint.y, true, true)
 
-                refresh()
+                imageMatrix = mDrawMatrix
 
             }
 
@@ -356,7 +372,7 @@ class PhotoView : ImageView {
         mImageWidth = if (drawable != null) drawable.intrinsicWidth.toFloat() else 0f
         mImageHeight = if (drawable != null) drawable.intrinsicHeight.toFloat() else 0f
 
-        reset()
+        updateBaseMatrix()
 
     }
 
@@ -380,9 +396,26 @@ class PhotoView : ImageView {
         }
         else if (bounce) {
             checkImageBounds { dx, dy ->
-                startBounceAnimator(dx, dy, bounceInterpolator)
+                startTranslateAnimator(dx, dy, bounceInterpolator)
             }
         }
+
+    }
+
+    fun updateForRead(update: (Matrix, Matrix) -> Unit, read: () -> Unit) {
+
+        val baseMatrix = Matrix(mBaseMatrix)
+        val changeMatrix = Matrix(mChangeMatrix)
+
+        update(mBaseMatrix, mChangeMatrix)
+
+        updateDrawMatrix()
+
+        read()
+
+        mBaseMatrix.set(baseMatrix)
+        mChangeMatrix.set(changeMatrix)
+        updateDrawMatrix()
 
     }
 
@@ -411,27 +444,22 @@ class PhotoView : ImageView {
             }
         })
 
-
-        // 计算缩放后的位移
-        val tempMatrix = Matrix(mChangeMatrix)
-
-        val scale = to / from
-        mChangeMatrix.postScale(scale, scale, mImageScaleFocusPoint.x, mImageScaleFocusPoint.y)
-        updateDrawMatrix()
-
         var deltaX = 0f
         var deltaY = 0f
 
-        checkImageBounds { dx, dy ->
-            deltaX = dx
-            deltaY = dy
+        // 计算缩放后的位移
+        updateForRead({ baseMatrix, changeMatrix ->
+            val scale = to / from
+            changeMatrix.postScale(scale, scale, mImageScaleFocusPoint.x, mImageScaleFocusPoint.y)
+        }) {
+            checkImageBounds { dx, dy ->
+                deltaX = dx
+                deltaY = dy
+            }
         }
 
-        mChangeMatrix.set(tempMatrix)
-        updateDrawMatrix()
-
         if (deltaX != 0f || deltaY != 0f) {
-            startBounceAnimator(deltaX, deltaY, interpolator)
+            startTranslateAnimator(deltaX, deltaY, interpolator)
         }
 
 
@@ -465,7 +493,7 @@ class PhotoView : ImageView {
                 if (animation == mTranslateAnimator) {
                     mTranslateAnimator = null
                     checkImageBounds { dx, dy ->
-                        startBounceAnimator(dx, dy, interpolator)
+                        startTranslateAnimator(dx, dy, interpolator)
                     }
                 }
             }
@@ -475,7 +503,7 @@ class PhotoView : ImageView {
 
     }
 
-    private fun startBounceAnimator(deltaX: Float, deltaY: Float, interpolator: TimeInterpolator) {
+    fun startTranslateAnimator(deltaX: Float, deltaY: Float, interpolator: TimeInterpolator) {
 
         mTranslateAnimator?.cancel()
 
@@ -590,7 +618,7 @@ class PhotoView : ImageView {
                 }
 
                 if (!silent) {
-                    refresh()
+                    imageMatrix = mDrawMatrix
                 }
 
             }
@@ -614,10 +642,8 @@ class PhotoView : ImageView {
             updateDrawMatrix()
 
             if (!silent) {
-                refresh()
+                imageMatrix = mDrawMatrix
             }
-
-            scale *= scaleFactor
 
             onScaleChange?.invoke()
 
@@ -629,7 +655,7 @@ class PhotoView : ImageView {
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        reset()
+        updateBaseMatrix()
     }
 
     /**
@@ -649,14 +675,6 @@ class PhotoView : ImageView {
             return mRect
         }
         return null
-    }
-
-    /**
-     * 根据当前的绘制矩阵刷新视图
-     */
-    private fun refresh() {
-        imageMatrix = mDrawMatrix
-        invalidate()
     }
 
     /**
@@ -713,57 +731,66 @@ class PhotoView : ImageView {
         }
     }
 
-    fun reset() {
+    fun resetMatrix(baseMatrix: Matrix, changeMatrix: Matrix): Float {
+
+        baseMatrix.reset()
+        changeMatrix.reset()
+
+        val widthScale = mContentWidth / mImageWidth
+        val heightScale = mContentHeight / mImageHeight
+
+        val zoomScale = when (scaleType) {
+            ScaleType.FILL_WIDTH -> {
+                widthScale
+            }
+            ScaleType.FILL_HEIGHT -> {
+                heightScale
+            }
+            ScaleType.FILL -> {
+                Math.max(widthScale, heightScale)
+            }
+            else -> {
+                Math.min(widthScale, heightScale)
+            }
+        }
+
+        baseMatrix.postScale(zoomScale, zoomScale)
+
+        val imageWidth = mImageWidth * zoomScale
+        val imageHeight = mImageHeight * zoomScale
+
+        val deltaX = if (mContentWidth > imageWidth) {
+            (mContentWidth - imageWidth) / 2
+        }
+        else {
+            0f
+        }
+
+        val deltaY = if (mContentHeight > imageHeight) {
+            (mContentHeight - imageHeight) / 2
+        }
+        else {
+            0f
+        }
+
+        baseMatrix.postTranslate(deltaX, deltaY)
+
+        return zoomScale
+
+    }
+
+    private fun updateBaseMatrix() {
 
         if (mImageWidth > 0 && mImageHeight > 0) {
 
-            mBaseMatrix.reset()
-            mChangeMatrix.reset()
+            val zoomScale = resetMatrix(mBaseMatrix, mChangeMatrix)
 
-            val widthScale = mContentWidth / mImageWidth
-            val heightScale = mContentHeight / mImageHeight
+            updateDrawMatrix()
 
-            val zoomScale = when (scaleType) {
-                ScaleType.FILL_WIDTH -> {
-                    widthScale
-                }
-                ScaleType.FILL_HEIGHT -> {
-                    heightScale
-                }
-                ScaleType.FILL -> {
-                    Math.max(widthScale, heightScale)
-                }
-                else -> {
-                    Math.min(widthScale, heightScale)
-                }
-            }
-
-            mBaseMatrix.postScale(zoomScale, zoomScale)
-
-            val imageWidth = mImageWidth * zoomScale
-            val imageHeight = mImageHeight * zoomScale
-
-            val deltaX = if (mContentWidth > imageWidth) {
-                (mContentWidth - imageWidth) / 2
-            }
-            else {
-                0f
-            }
-
-            val deltaY = if (mContentHeight > imageHeight) {
-                (mContentHeight - imageHeight) / 2
-            }
-            else {
-                0f
-            }
-
-            mBaseMatrix.postTranslate(deltaX, deltaY)
-
-            imageMatrix = mBaseMatrix
+            imageMatrix = mDrawMatrix
 
             maxScale = if (3 * zoomScale < 1) 1f else (3 * zoomScale)
             minScale = zoomScale
-            scale = zoomScale
 
             onReset?.invoke()
 
@@ -774,7 +801,6 @@ class PhotoView : ImageView {
         mDrawMatrix.set(mBaseMatrix)
         mDrawMatrix.postConcat(mChangeMatrix)
     }
-
 
     // getValue(imageMatrix, Matrix.MTRANS_X)
     private fun getValue(matrix: Matrix, whichValue: Int): Float {
