@@ -250,7 +250,7 @@ class PhotoCrop: FrameLayout {
             this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
         })
 
-        photoView.startZoomAnimation(fromScale, toScale, fromCropArea.left, fromCropArea.top)
+        photoView.startZoomAnimation(fromScale, toScale, fromRect.centerX(), fromRect.centerY())
 
     }
 
