@@ -641,27 +641,24 @@ class PhotoView : ImageView {
 
     }
 
-    private fun zoom(zoomScale: Float, silent: Boolean = false): Boolean {
+    private fun zoom(factor: Float, silent: Boolean = false) {
 
-        if (zoomScale != 1f) {
-
-            // 缩放
-            mChangeMatrix.postScale(zoomScale, zoomScale, mFocusPoint.x, mFocusPoint.y)
-
-            // 更新最后起作用的矩阵
-            updateDrawMatrix()
-
-            if (!silent) {
-                imageMatrix = mDrawMatrix
-            }
-
-            onScaleChange?.invoke()
-            onPositionChange?.invoke()
-
-            return true
+        if (factor == 1f) {
+            return
         }
 
-        return false
+        // 缩放
+        mChangeMatrix.postScale(factor, factor, mFocusPoint.x, mFocusPoint.y)
+
+        // 更新最后起作用的矩阵
+        updateDrawMatrix()
+
+        if (!silent) {
+            imageMatrix = mDrawMatrix
+        }
+
+        onScaleChange?.invoke()
+        onPositionChange?.invoke()
 
     }
 
@@ -742,7 +739,7 @@ class PhotoView : ImageView {
         }
     }
 
-    fun resetMatrix(baseMatrix: Matrix, changeMatrix: Matrix): Float {
+    fun resetMatrix(baseMatrix: Matrix, changeMatrix: Matrix) {
 
         baseMatrix.reset()
         changeMatrix.reset()
@@ -786,8 +783,6 @@ class PhotoView : ImageView {
 
         baseMatrix.postTranslate(deltaX, deltaY)
 
-        return zoomScale
-
     }
 
     fun updateLimitScale() {
@@ -799,7 +794,7 @@ class PhotoView : ImageView {
 
         if (mImageWidth > 0 && mImageHeight > 0) {
 
-            val zoomScale = resetMatrix(mBaseMatrix, mChangeMatrix)
+            resetMatrix(mBaseMatrix, mChangeMatrix)
 
             updateDrawMatrix()
 
