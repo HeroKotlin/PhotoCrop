@@ -3,6 +3,7 @@ package com.github.herokotlin.photocrop
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -42,8 +43,8 @@ class PhotoCrop: FrameLayout {
             val fromScale = photoView.scale
             var toScale = fromScale
 
-            val fromOrigin = photoView.imageOrigin
-            var toOrigin = fromOrigin
+
+            var toOrigin = PointF()
 
             var offsetPadding = CropArea.zero
             var offsetCropArea = CropArea.zero
@@ -69,16 +70,16 @@ class PhotoCrop: FrameLayout {
 
                 }
 
-                animation = { value ->
+                animation = { alpha ->
 
-                    overlayView.alpha = value
-                    finderView.alpha = value
-                    gridView.alpha = value
+                    overlayView.alpha = alpha
+                    finderView.alpha = alpha
+                    gridView.alpha = alpha
 
-                    val padding = fromPadding.add(offsetPadding.multiply(value))
+                    val padding = fromPadding.add(offsetPadding.multiply(alpha))
                     photoView.setPadding(padding.left.toInt(), padding.top.toInt(), padding.right.toInt(), padding.bottom.toInt())
 
-                    cropArea = fromCropArea.add(offsetCropArea.multiply(value))
+                    cropArea = fromCropArea.add(offsetCropArea.multiply(alpha))
 
                 }
 
@@ -115,8 +116,11 @@ class PhotoCrop: FrameLayout {
 
             }
 
+            photoView.setPadding(toPadding.left.toInt(), toPadding.top.toInt(), toPadding.right.toInt(), toPadding.bottom.toInt())
+
+            val fromOrigin = photoView.imageOrigin
+
             photoView.updateForRead({ baseMatrix, changeMatrix ->
-                photoView.setPadding(toPadding.left.toInt(), toPadding.top.toInt(), toPadding.right.toInt(), toPadding.bottom.toInt())
                 photoView.resetMatrix(baseMatrix, changeMatrix)
             }, reader)
 
