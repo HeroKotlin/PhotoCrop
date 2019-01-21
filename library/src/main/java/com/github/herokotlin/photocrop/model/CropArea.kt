@@ -1,9 +1,10 @@
 package com.github.herokotlin.photocrop.model
 
 import android.graphics.RectF
+import com.github.herokotlin.photoview.PhotoView
 
 data class CropArea(
-    var top: Float,
+    val top: Float,
     val left: Float,
     val bottom: Float,
     val right: Float
@@ -19,6 +20,10 @@ data class CropArea(
 
     fun toRect(width: Int, height: Int): RectF {
         return RectF(left, top, width - right, height - bottom)
+    }
+
+    fun toContentInset(): PhotoView.ContentInset {
+        return PhotoView.ContentInset(top, left, bottom, right)
     }
 
     fun add(cropArea: CropArea): CropArea {

@@ -37,16 +37,14 @@ class PhotoCrop: FrameLayout {
             var fromCropArea = cropArea
             var toCropArea = fromCropArea
 
-            val fromPadding = CropArea(photoView.paddingTop.toFloat(), photoView.paddingLeft.toFloat(), photoView.paddingBottom.toFloat(), photoView.paddingRight.toFloat())
-            var toPadding = CropArea.zero
+            val fromContentInset = photoView.contentInset
+            var toContentInset = PhotoView.ContentInset.zero
 
             val fromScale = photoView.scale
             var toScale = fromScale
 
-
             var toOrigin = PointF()
 
-            var offsetPadding = CropArea.zero
             var offsetCropArea = CropArea.zero
 
             val reader: () -> Unit
@@ -61,7 +59,7 @@ class PhotoCrop: FrameLayout {
                 fromCropArea = getCropAreaByPhotoView()
                 toCropArea = finderView.normalizedCropArea
 
-                toPadding = toCropArea
+                toContentInset = toCropArea.toContentInset()
 
                 reader = {
 
@@ -75,9 +73,6 @@ class PhotoCrop: FrameLayout {
                     overlayView.alpha = alpha
                     finderView.alpha = alpha
                     gridView.alpha = alpha
-
-                    val padding = fromPadding.add(offsetPadding.multiply(alpha))
-                    photoView.setPadding(padding.left.toInt(), padding.top.toInt(), padding.right.toInt(), padding.bottom.toInt())
 
                     cropArea = fromCropArea.add(offsetCropArea.multiply(alpha))
 
@@ -107,16 +102,17 @@ class PhotoCrop: FrameLayout {
                     finderView.alpha = alpha
                     gridView.alpha = alpha
 
-                    val padding = fromPadding.add(offsetPadding.multiply(value))
-                    photoView.setPadding(padding.left.toInt(), padding.top.toInt(), padding.right.toInt(), padding.bottom.toInt())
-
                     cropArea = fromCropArea.add(offsetCropArea.multiply(value))
 
                 }
 
             }
 
-            photoView.setPadding(toPadding.left.toInt(), toPadding.top.toInt(), toPadding.right.toInt(), toPadding.bottom.toInt())
+            // 先获取一次图片位置
+            // 然后设置 toContentInset，再获取一次位置
+            // 然后基于两个位置开始位移动画
+
+            photoView.contentInset = toContentInset
 
             val fromOrigin = photoView.imageOrigin
 
@@ -124,12 +120,9 @@ class PhotoCrop: FrameLayout {
                 photoView.resetMatrix(baseMatrix, changeMatrix)
             }, reader)
 
-            photoView.setPadding(fromPadding.left.toInt(), fromPadding.top.toInt(), fromPadding.right.toInt(), fromPadding.bottom.toInt())
-
             cropArea = fromCropArea
 
             offsetCropArea = toCropArea.minus(fromCropArea)
-            offsetPadding = toPadding.minus(fromPadding)
 
             startAnimation(animation) {
                 photoView.updateLimitScale()
@@ -168,7 +161,6 @@ class PhotoCrop: FrameLayout {
 
         finderView.onCropAreaChange = {
             val rect = finderView.cropArea.toRect(width, height)
-            Log.d("photocrop", "croparea  ${finderView.cropArea} => ${rect.width()} ${rect.height()}")
             Util.updateView(foregroundView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
             Util.updateView(gridView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
             foregroundView.updateImageOrigin()
@@ -181,6 +173,7 @@ class PhotoCrop: FrameLayout {
 
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = {
+            Log.d("photocrop", "${photoView.imageOrigin}")
             updateFinderMinSize()
             foregroundView.updateImageSize()
         }
@@ -274,8 +267,8 @@ class PhotoCrop: FrameLayout {
             this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
 
         })
-Log.d("photocrop", "!!!! $translate")
-        photoView.startZoomAnimation(fromScale, toScale, fromRect.left, fromRect.top)
+
+        photoView.startZoomAnimation(fromScale, toScale, 0f, 0f)
         photoView.startTranslateAnimation(translate.x, translate.y, LinearInterpolator())
 
     }
