@@ -79,25 +79,21 @@
     <View
         android:id="@+id/topLeftButton"
         android:layout_width="@dimen/photo_crop_finder_corner_button_size"
-        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
-        android:background="@color/photo_crop_finder_corner_button_color"/>
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"/>
 
     <View
         android:id="@+id/topRightButton"
         android:layout_width="@dimen/photo_crop_finder_corner_button_size"
-        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
-        android:background="@color/photo_crop_finder_corner_button_color"/>
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"/>
 
     <View
         android:id="@+id/bottomLeftButton"
         android:layout_width="@dimen/photo_crop_finder_corner_button_size"
-        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
-        android:background="@color/photo_crop_finder_corner_button_color"/>
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"/>
 
     <View
         android:id="@+id/bottomRightButton"
         android:layout_width="@dimen/photo_crop_finder_corner_button_size"
-        android:layout_height="@dimen/photo_crop_finder_corner_button_size"
-        android:background="@color/photo_crop_finder_corner_button_color"/>
+        android:layout_height="@dimen/photo_crop_finder_corner_button_size"/>
 
 </FrameLayout>

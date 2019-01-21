@@ -3,7 +3,6 @@ package com.github.herokotlin.photocrop
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.PointF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -251,10 +250,7 @@ class PhotoCrop: FrameLayout {
             this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
         })
 
-        photoView.startZoomAnimation(fromScale, toScale, 0f, 0f)
-
-        val translate = foregroundView.getTranslateAfterZoom(scale)
-//        photoView.startTranslateAnimation(translate.x, translate.y, LinearInterpolator())
+        photoView.startZoomAnimation(fromScale, toScale, fromCropArea.left, fromCropArea.top)
 
     }
 
