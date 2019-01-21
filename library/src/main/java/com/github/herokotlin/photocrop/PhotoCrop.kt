@@ -135,7 +135,7 @@ class PhotoCrop: FrameLayout {
                 photoView.updateLimitScale()
             }
 
-            photoView.startZoomAnimation(fromScale, toScale, 500, LinearInterpolator())
+            photoView.startZoomAnimation(fromScale, toScale)
             photoView.startTranslateAnimation(toOrigin.x - fromOrigin.x, toOrigin.y - fromOrigin.y, LinearInterpolator())
 
         }
@@ -196,7 +196,8 @@ class PhotoCrop: FrameLayout {
 
         val animator = ValueAnimator.ofFloat(0f, 1f)
 
-        animator.duration = 500
+        animator.duration = 300
+        animator.interpolator = LinearInterpolator()
         animator.addUpdateListener {
             update(it.animatedValue as Float)
         }
@@ -246,12 +247,12 @@ class PhotoCrop: FrameLayout {
         val fromCropArea = finderView.cropArea
         val toCropArea = cropArea
 
-        val oldRect = fromCropArea.toRect(width, height)
-        val newRect = toCropArea.toRect(width, height)
+        val fromRect = fromCropArea.toRect(width, height)
+        val toRect = toCropArea.toRect(width, height)
 
         // 谁更大就用谁作为缩放系数
-        val widthScale = newRect.width() / oldRect.width()
-        val heightScale = newRect.height() / oldRect.height()
+        val widthScale = toRect.width() / fromRect.width()
+        val heightScale = toRect.height() / fromRect.height()
         val scale = Math.max(widthScale, heightScale)
 
         if (scale == 1f) {
@@ -269,7 +270,7 @@ class PhotoCrop: FrameLayout {
 
         })
 
-        photoView.startZoomAnimation(fromScale, toScale, 500, LinearInterpolator())
+        photoView.startZoomAnimation(fromScale, toScale, fromCropArea.left + fromRect.width() / 2, fromCropArea.top + fromRect.height() / 2)
 
     }
 

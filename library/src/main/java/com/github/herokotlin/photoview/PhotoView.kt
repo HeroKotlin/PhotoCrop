@@ -6,6 +6,7 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
@@ -418,9 +419,19 @@ class PhotoView : ImageView {
 
     }
 
-    fun startZoomAnimation(from: Float, to: Float, duration: Long, interpolator: TimeInterpolator) {
+    fun startZoomAnimation(from: Float, to: Float, focusX: Float = width / 2f, focusY: Float = height / 2f) {
+
+        mImageScaleFocusPoint.set(focusX, focusY)
+
+        startZoomAnimation(from, to, zoomDuration, zoomInterpolator)
+
+    }
+
+    private fun startZoomAnimation(from: Float, to: Float, duration: Long, interpolator: TimeInterpolator) {
 
         mZoomAnimator?.cancel()
+
+        Log.d("photocrop", "$mImageScaleFocusPoint   ($width, $height) ----- $imageOrigin $imageSize")
 
         val animator = ValueAnimator.ofFloat(from, to)
         var lastValue = from
