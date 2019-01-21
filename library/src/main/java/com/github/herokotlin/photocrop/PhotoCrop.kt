@@ -197,11 +197,7 @@ class PhotoCrop: FrameLayout {
 
         animator.duration = 500
         animator.addUpdateListener {
-
-            val value = it.animatedValue as Float
-
-            update(value)
-
+            update(it.animatedValue as Float)
         }
         animator.addListener(object: AnimatorListenerAdapter() {
             // 动画被取消，onAnimationEnd() 也会被调用
