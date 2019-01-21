@@ -842,8 +842,36 @@ class PhotoView : ImageView {
         val scaleY = (y - origin.y) / size.height
 
         // 最后的换算
-        val focusX = Math.min(Math.max(scaleX * maxX, minX), maxX)
-        val focusY = Math.min(Math.max(scaleY * maxY, minY), maxY)
+        var focusX = Math.min(Math.max(scaleX * maxX, minX), maxX)
+        var focusY = Math.min(Math.max(scaleY * maxY, minY), maxY)
+
+        // 如果距离四角很近，可优化体验
+        val threshold = 80f
+
+        if (focusX < threshold) {
+            // 左上
+            if (focusY < threshold) {
+                focusX = minX
+                focusY = minY
+            }
+            // 左下
+            else if (maxY - focusY < threshold) {
+                focusX = minX
+                focusY = maxY
+            }
+        }
+        else if (maxX - focusX < threshold) {
+            // 右上
+            if (focusY < threshold) {
+                focusX = maxX
+                focusY = minY
+            }
+            // 右下
+            else if (maxY - focusY < threshold) {
+                focusX = maxX
+                focusY = maxY
+            }
+        }
 
         mFocusPoint = PointF(focusX, focusY)
 
