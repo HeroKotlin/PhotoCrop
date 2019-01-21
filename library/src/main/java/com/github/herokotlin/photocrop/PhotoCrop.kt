@@ -37,13 +37,10 @@ class PhotoCrop: FrameLayout {
             var fromCropArea = cropArea
             var toCropArea = fromCropArea
 
-            val fromContentInset = photoView.contentInset
             var toContentInset = PhotoView.ContentInset.zero
 
             val fromScale = photoView.scale
             var toScale = fromScale
-
-            var toOrigin = PointF()
 
             var offsetCropArea = CropArea.zero
 
@@ -64,7 +61,6 @@ class PhotoCrop: FrameLayout {
                 reader = {
 
                     toScale = photoView.scale
-                    toOrigin = photoView.imageOrigin
 
                 }
 
@@ -88,7 +84,6 @@ class PhotoCrop: FrameLayout {
                 reader = {
 
                     toScale = photoView.scale
-                    toOrigin = photoView.imageOrigin
 
                     toCropArea = getCropAreaByPhotoView()
 
@@ -108,13 +103,7 @@ class PhotoCrop: FrameLayout {
 
             }
 
-            // 先获取一次图片位置
-            // 然后设置 toContentInset，再获取一次位置
-            // 然后基于两个位置开始位移动画
-
             photoView.contentInset = toContentInset
-
-            val fromOrigin = photoView.imageOrigin
 
             photoView.updateForRead({ baseMatrix, changeMatrix ->
                 photoView.resetMatrix(baseMatrix, changeMatrix)
@@ -129,7 +118,6 @@ class PhotoCrop: FrameLayout {
             }
 
             photoView.startZoomAnimation(fromScale, toScale)
-            photoView.startTranslateAnimation(toOrigin.x - fromOrigin.x, toOrigin.y - fromOrigin.y, LinearInterpolator())
 
         }
 

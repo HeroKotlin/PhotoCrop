@@ -96,20 +96,23 @@ class PhotoView : ImageView {
 
         set(value) {
 
-            // 记录位置和缩放，重置后再还原回来
-            val oldOrigin = imageOrigin
             val oldScale = scale
+            val oldOrigin = imageOrigin
 
+            // 开始更新
             field = value
 
             updateBaseMatrix(true)
 
-            zoom(oldScale / scale, true)
+            // 还原为原来的尺寸
+            val newScale = scale
+            zoom(oldScale / newScale, true)
 
+            // 还原成原来的位置
             val newOrigin = imageOrigin
-
             translate(oldOrigin.x - newOrigin.x, oldOrigin.y - newOrigin.y, false, true)
 
+            // 发射
             imageMatrix = mDrawMatrix
 
         }
@@ -815,16 +818,13 @@ class PhotoView : ImageView {
         if (mImageWidth > 0 && mImageHeight > 0) {
 
             resetMatrix(mBaseMatrix, mChangeMatrix)
-
             updateDrawMatrix()
+            updateLimitScale()
 
             if (!silent) {
                 imageMatrix = mDrawMatrix
+                onReset?.invoke()
             }
-
-            updateLimitScale()
-
-            onReset?.invoke()
 
         }
     }
