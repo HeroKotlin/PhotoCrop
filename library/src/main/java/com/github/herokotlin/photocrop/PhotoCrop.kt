@@ -48,7 +48,7 @@ class PhotoCrop: FrameLayout {
             var offsetPadding = CropArea.zero
             var offsetCropArea = CropArea.zero
 
-            val readValue: () -> Unit
+            val reader: () -> Unit
             val animation: (Float) -> Unit
 
             if (value) {
@@ -62,7 +62,7 @@ class PhotoCrop: FrameLayout {
 
                 toPadding = toCropArea
 
-                readValue = {
+                reader = {
 
                     toScale = photoView.scale
                     toOrigin = photoView.imageOrigin
@@ -89,7 +89,7 @@ class PhotoCrop: FrameLayout {
 
                 photoView.scaleType = PhotoView.ScaleType.FIT
 
-                readValue = {
+                reader = {
 
                     toScale = photoView.scale
                     toOrigin = photoView.imageOrigin
@@ -118,7 +118,7 @@ class PhotoCrop: FrameLayout {
             photoView.updateForRead({ baseMatrix, changeMatrix ->
                 photoView.setPadding(toPadding.left, toPadding.top, toPadding.right, toPadding.bottom)
                 photoView.resetMatrix(baseMatrix, changeMatrix)
-            }, readValue)
+            }, reader)
 
             photoView.setPadding(fromPadding.left, fromPadding.top, fromPadding.right, fromPadding.bottom)
 
@@ -148,10 +148,6 @@ class PhotoCrop: FrameLayout {
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {
         init()
-    }
-
-    private val finderCornerLineWidth: Int by lazy {
-        resources.getDimensionPixelSize(R.dimen.photo_crop_finder_corner_line_width)
     }
 
     private val finderMinWidth: Int by lazy {
