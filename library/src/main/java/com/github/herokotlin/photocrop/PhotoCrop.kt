@@ -36,7 +36,7 @@ class PhotoCrop: FrameLayout {
             var fromCropArea = cropArea
             var toCropArea = fromCropArea
 
-            val fromPadding = CropArea(photoView.paddingTop, photoView.paddingLeft, photoView.paddingBottom, photoView.paddingRight)
+            val fromPadding = CropArea(photoView.paddingTop.toFloat(), photoView.paddingLeft.toFloat(), photoView.paddingBottom.toFloat(), photoView.paddingRight.toFloat())
             var toPadding = CropArea.zero
 
             val fromScale = photoView.scale
@@ -76,7 +76,7 @@ class PhotoCrop: FrameLayout {
                     gridView.alpha = value
 
                     val padding = fromPadding.add(offsetPadding.multiply(value))
-                    photoView.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+                    photoView.setPadding(padding.left.toInt(), padding.top.toInt(), padding.right.toInt(), padding.bottom.toInt())
 
                     cropArea = fromCropArea.add(offsetCropArea.multiply(value))
 
@@ -107,7 +107,7 @@ class PhotoCrop: FrameLayout {
                     gridView.alpha = alpha
 
                     val padding = fromPadding.add(offsetPadding.multiply(value))
-                    photoView.setPadding(padding.left, padding.top, padding.right, padding.bottom)
+                    photoView.setPadding(padding.left.toInt(), padding.top.toInt(), padding.right.toInt(), padding.bottom.toInt())
 
                     cropArea = fromCropArea.add(offsetCropArea.multiply(value))
 
@@ -116,11 +116,11 @@ class PhotoCrop: FrameLayout {
             }
 
             photoView.updateForRead({ baseMatrix, changeMatrix ->
-                photoView.setPadding(toPadding.left, toPadding.top, toPadding.right, toPadding.bottom)
+                photoView.setPadding(toPadding.left.toInt(), toPadding.top.toInt(), toPadding.right.toInt(), toPadding.bottom.toInt())
                 photoView.resetMatrix(baseMatrix, changeMatrix)
             }, reader)
 
-            photoView.setPadding(fromPadding.left, fromPadding.top, fromPadding.right, fromPadding.bottom)
+            photoView.setPadding(fromPadding.left.toInt(), fromPadding.top.toInt(), fromPadding.right.toInt(), fromPadding.bottom.toInt())
 
             cropArea = fromCropArea
 
@@ -132,7 +132,7 @@ class PhotoCrop: FrameLayout {
             }
 
             photoView.startZoomAnimation(fromScale, toScale, 500, LinearInterpolator())
-            photoView.startTranslateAnimation((toOrigin.x - fromOrigin.x).toFloat(), (toOrigin.y - fromOrigin.y).toFloat(), LinearInterpolator())
+            photoView.startTranslateAnimation(toOrigin.x - fromOrigin.x, toOrigin.y - fromOrigin.y, LinearInterpolator())
 
         }
 
@@ -163,8 +163,9 @@ class PhotoCrop: FrameLayout {
 
         finderView.onCropAreaChange = {
             val rect = finderView.cropArea.toRect(width, height)
-            Util.updateView(foregroundView, rect.left, rect.top, rect.width(), rect.height())
-            Util.updateView(gridView, rect.left, rect.top, rect.width(), rect.height())
+            Util.updateView(foregroundView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
+            Util.updateView(gridView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
+            foregroundView.updateImageOrigin()
         }
         finderView.onCropAreaResize = {
             updateCropArea(finderView.normalizedCropArea)
@@ -226,11 +227,11 @@ class PhotoCrop: FrameLayout {
         val imageOrigin = photoView.imageOrigin
         val imageSize = photoView.imageSize
 
-        val left = Math.max(imageOrigin.x, 0)
-        val top = Math.max(imageOrigin.y, 0)
+        val left = Math.max(imageOrigin.x, 0f)
+        val top = Math.max(imageOrigin.y, 0f)
 
-        val right = Math.max(photoView.width - (imageOrigin.x + imageSize.width), 0)
-        val bottom = Math.max(photoView.height - (imageOrigin.y + imageSize.height), 0)
+        val right = Math.max(photoView.width - (imageOrigin.x + imageSize.width), 0f)
+        val bottom = Math.max(photoView.height - (imageOrigin.y + imageSize.height), 0f)
 
         return CropArea(top, left, bottom, right)
 
@@ -245,8 +246,8 @@ class PhotoCrop: FrameLayout {
         val newRect = toCropArea.toRect(width, height)
 
         // 谁更大就用谁作为缩放系数
-        val widthScale = newRect.width().toFloat() / oldRect.width()
-        val heightScale = newRect.height().toFloat() / oldRect.height()
+        val widthScale = newRect.width() / oldRect.width()
+        val heightScale = newRect.height() / oldRect.height()
         val scale = Math.max(widthScale, heightScale)
 
         if (scale == 1f) {
@@ -255,10 +256,8 @@ class PhotoCrop: FrameLayout {
 
         val offsetCropArea = toCropArea.minus(fromCropArea)
 
-        Log.d("photocrop", "origin ${photoView.imageOrigin}")
         val fromScale = photoView.scale
         val toScale = fromScale * scale
-
 
         startAnimation({ value ->
 
@@ -267,7 +266,6 @@ class PhotoCrop: FrameLayout {
         })
 
         photoView.startZoomAnimation(fromScale, toScale, 500, LinearInterpolator())
-        photoView.startTranslateAnimation(offsetCropArea.left.toFloat(), offsetCropArea.top.toFloat(), LinearInterpolator())
 
     }
 

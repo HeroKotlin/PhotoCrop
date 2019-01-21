@@ -1,6 +1,7 @@
 package com.github.herokotlin.photocrop.view
 
 import android.content.Context
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -42,7 +43,22 @@ class ForegroundView: FrameLayout {
 
     fun updateImageOrigin() {
         val origin = photoView.imageOrigin
-        Util.updateOrigin(imageView, origin.x, origin.y)
+        Util.updateOrigin(imageView, origin.x - x, origin.y - y)
+    }
+
+    fun getTranslateAfterZoom(zoomScale: Float): PointF {
+
+        val oldX = imageView.x
+        val oldY = imageView.y
+
+        val relativeX = imageView.x / imageView.width
+        val relativeY = imageView.y / imageView.height
+
+        val newX = imageView.width * zoomScale * relativeX
+        val newY = imageView.height * zoomScale * relativeY
+
+        return PointF(newX - oldX, newY - oldY)
+
     }
 
 }

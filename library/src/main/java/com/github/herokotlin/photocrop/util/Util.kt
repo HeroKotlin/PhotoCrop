@@ -5,14 +5,14 @@ import android.widget.FrameLayout
 
 internal object Util {
 
-    fun updateView(view: View, x: Int, y: Int, width: Int, height: Int) {
+    fun updateView(view: View, x: Float, y: Float, width: Int, height: Int) {
         updateOrigin(view, x, y)
         updateSize(view, width, height)
     }
 
-    fun updateOrigin(view: View, x: Int, y: Int) {
-        view.x = x.toFloat()
-        view.y = y.toFloat()
+    fun updateOrigin(view: View, x: Float, y: Float) {
+        view.x = x
+        view.y = y
     }
 
     fun updateSize(view: View, width: Int, height: Int) {

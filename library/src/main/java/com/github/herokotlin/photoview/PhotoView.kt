@@ -6,8 +6,6 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import android.util.Size
-import android.util.SizeF
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
@@ -114,19 +112,19 @@ class PhotoView : ImageView {
             zoom(value / scale, 0f, 0f, false)
         }
 
-    var imageOrigin: Point
+    var imageOrigin: PointF
 
         get() {
-            return Point(
-                getValue(mDrawMatrix, Matrix.MTRANS_X).toInt(),
-                getValue(mDrawMatrix, Matrix.MTRANS_Y).toInt()
+            return PointF(
+                paddingLeft + getValue(mDrawMatrix, Matrix.MTRANS_X),
+                paddingTop + getValue(mDrawMatrix, Matrix.MTRANS_Y)
             )
         }
 
         set(value) {
             // 只读
-            val dx = value.x - getValue(mBaseMatrix, Matrix.MTRANS_X)
-            val dy = value.y - getValue(mBaseMatrix, Matrix.MTRANS_Y)
+            val dx = value.x - paddingLeft - getValue(mBaseMatrix, Matrix.MTRANS_X)
+            val dy = value.y - paddingTop - getValue(mBaseMatrix, Matrix.MTRANS_Y)
             mChangeMatrix.setTranslate(dx, dy)
             updateDrawMatrix()
             imageMatrix = mDrawMatrix

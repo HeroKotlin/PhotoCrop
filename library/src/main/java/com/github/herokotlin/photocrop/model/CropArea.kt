@@ -1,24 +1,24 @@
 package com.github.herokotlin.photocrop.model
 
-import android.graphics.Rect
+import android.graphics.RectF
 
 data class CropArea(
-    var top: Int,
-    val left: Int,
-    val bottom: Int,
-    val right: Int
+    var top: Float,
+    val left: Float,
+    val bottom: Float,
+    val right: Float
 ) {
 
     companion object {
-        val zero = CropArea(0, 0, 0, 0)
+        val zero = CropArea(0f, 0f, 0f, 0f)
     }
 
     override fun toString(): String {
         return "top: $top, left: $left, right: $right, bottom: $bottom"
     }
 
-    fun toRect(width: Int, height: Int): Rect {
-        return Rect(left, top, width - right, height - bottom)
+    fun toRect(width: Int, height: Int): RectF {
+        return RectF(left, top, width - right, height - bottom)
     }
 
     fun add(cropArea: CropArea): CropArea {
@@ -41,10 +41,10 @@ data class CropArea(
 
     fun multiply(factor: Float): CropArea {
         return CropArea(
-            (top * factor).toInt(),
-            (left * factor).toInt(),
-            (bottom * factor).toInt(),
-            (right * factor).toInt()
+            top * factor,
+            left * factor,
+            bottom * factor,
+            right * factor
         )
     }
 

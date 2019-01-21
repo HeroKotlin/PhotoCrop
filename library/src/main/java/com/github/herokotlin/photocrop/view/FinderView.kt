@@ -208,8 +208,8 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
             cropWidth = cropHeight * cropRatio
         }
 
-        val vertical = (h - cropHeight) / 2
-        val horizontal = (w - cropWidth) / 2
+        val vertical = (h - cropHeight) / 2f
+        val horizontal = (w - cropWidth) / 2f
 
         normalizedCropArea = CropArea(vertical, horizontal, vertical, horizontal)
 
@@ -250,10 +250,10 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
         val halfButtonSize = cornerButtonSize / 2
 
-        Util.updateView(topBorder, left, top - borderWidth, right - left, borderWidth)
-        Util.updateView(rightBorder, right, top, borderWidth, bottom - top)
-        Util.updateView(bottomBorder, left, bottom, right - left, borderWidth)
-        Util.updateView(leftBorder, left - borderWidth, top, borderWidth, bottom - top)
+        Util.updateView(topBorder, left, top - borderWidth, (right - left).toInt(), borderWidth)
+        Util.updateView(rightBorder, right, top, borderWidth, (bottom - top).toInt())
+        Util.updateView(bottomBorder, left, bottom, (right - left).toInt(), borderWidth)
+        Util.updateView(leftBorder, left - borderWidth, top, borderWidth, (bottom - top).toInt())
 
         Util.updateOrigin(topLeftButton, left - cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
         Util.updateOrigin(topLeftHorizontalLine, left - cornerLineWidth, top - cornerLineWidth)
