@@ -175,7 +175,7 @@ class PhotoView : ImageView {
     var onDragEnd: (() -> Unit)? = null
 
     var onScaleChange: (() -> Unit)? = null
-    var onPositionChange: (() -> Unit)? = null
+    var onOriginChange: (() -> Unit)? = null
 
     private val mGestureDetector: GestureDetector by lazy {
         GestureDetector(context, object: GestureListener {
@@ -659,7 +659,7 @@ class PhotoView : ImageView {
                     imageMatrix = mDrawMatrix
                 }
 
-                onPositionChange?.invoke()
+                onOriginChange?.invoke()
 
             }
         }
@@ -685,7 +685,7 @@ class PhotoView : ImageView {
         }
 
         onScaleChange?.invoke()
-        onPositionChange?.invoke()
+        onOriginChange?.invoke()
 
     }
 

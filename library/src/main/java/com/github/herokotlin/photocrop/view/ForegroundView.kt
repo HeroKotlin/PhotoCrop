@@ -39,13 +39,11 @@ class ForegroundView: FrameLayout {
 
     fun updateImageSize() {
         val size = photoView.imageSize
-        Log.d("photocrop", "1  size  $size")
         Util.updateSize(imageView, size.width.toInt(), size.height.toInt())
     }
 
     fun updateImageOrigin() {
         val origin = photoView.imageOrigin
-        Log.d("photocrop", "2  origin  $origin   $x,$y")
         Util.updateOrigin(imageView, origin.x - x, origin.y - y)
     }
 

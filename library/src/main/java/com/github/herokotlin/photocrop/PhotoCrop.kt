@@ -161,11 +161,10 @@ class PhotoCrop: FrameLayout {
 
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = {
-            Log.d("photocrop", "${photoView.imageOrigin}")
             updateFinderMinSize()
             foregroundView.updateImageSize()
         }
-        photoView.onPositionChange = {
+        photoView.onOriginChange = {
             foregroundView.updateImageOrigin()
         }
 
@@ -248,16 +247,14 @@ class PhotoCrop: FrameLayout {
         val fromScale = photoView.scale
         val toScale = fromScale * scale
 
-        val translate = foregroundView.getTranslateAfterZoom(scale)
-
         startAnimation({ value ->
-
             this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
-
         })
 
         photoView.startZoomAnimation(fromScale, toScale, 0f, 0f)
-        photoView.startTranslateAnimation(translate.x, translate.y, LinearInterpolator())
+
+        val translate = foregroundView.getTranslateAfterZoom(scale)
+//        photoView.startTranslateAnimation(translate.x, translate.y, LinearInterpolator())
 
     }
 
