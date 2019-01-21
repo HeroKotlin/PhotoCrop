@@ -6,7 +6,6 @@ import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
@@ -110,7 +109,7 @@ class PhotoView : ImageView {
         }
 
         set(value) {
-            zoom(value / scale, width / 2f, height / 2f)
+
         }
 
     var imageOrigin: PointF
@@ -236,7 +235,7 @@ class PhotoView : ImageView {
                 updateFocusPoint(focusPoint.x, focusPoint.y)
 
 
-                zoom(zoomFactor, mFocusPoint.x, mFocusPoint.y, true)
+                zoom(zoomFactor, true)
 
                 translate(focusPoint.x - lastFocusPoint.x, focusPoint.y - lastFocusPoint.y, true, true)
 
@@ -444,7 +443,7 @@ class PhotoView : ImageView {
 
         animator.addUpdateListener {
             val value = it.animatedValue as Float
-            zoom(value / lastValue, mFocusPoint.x, mFocusPoint.y)
+            zoom(value / lastValue)
             lastValue = value
         }
 
@@ -457,23 +456,23 @@ class PhotoView : ImageView {
             }
         })
 
-//        var deltaX = 0f
-//        var deltaY = 0f
-//
-//        // 计算缩放后的位移
-//        updateForRead({ _, changeMatrix ->
-//            val scale = to / from
-//            changeMatrix.postScale(scale, scale, mFocusPoint.x, mFocusPoint.y)
-//        }) {
-//            checkImageBounds { dx, dy ->
-//                deltaX = dx
-//                deltaY = dy
-//            }
-//        }
-//
-//        if (deltaX != 0f || deltaY != 0f) {
-//            startTranslateAnimation(deltaX, deltaY, interpolator)
-//        }
+        var deltaX = 0f
+        var deltaY = 0f
+
+        // 计算缩放后的位移
+        updateForRead({ _, changeMatrix ->
+            val scale = to / from
+            changeMatrix.postScale(scale, scale, mFocusPoint.x, mFocusPoint.y)
+        }) {
+            checkImageBounds { dx, dy ->
+                deltaX = dx
+                deltaY = dy
+            }
+        }
+
+        if (deltaX != 0f || deltaY != 0f) {
+            startTranslateAnimation(deltaX, deltaY, interpolator)
+        }
 
         animator.start()
 
@@ -582,8 +581,8 @@ class PhotoView : ImageView {
 
             if (deltaX != 0f || deltaY != 0f) {
 
-//                mFocusPoint.x += deltaX
-//                mFocusPoint.y += deltaY
+                mFocusPoint.x += deltaX
+                mFocusPoint.y += deltaY
 
                 mChangeMatrix.postTranslate(deltaX, deltaY)
                 updateDrawMatrix()
@@ -642,12 +641,12 @@ class PhotoView : ImageView {
 
     }
 
-    private fun zoom(zoomScale: Float, focusX: Float, focusY: Float, silent: Boolean = false): Boolean {
+    private fun zoom(zoomScale: Float, silent: Boolean = false): Boolean {
 
         if (zoomScale != 1f) {
 
             // 缩放
-            mChangeMatrix.postScale(zoomScale, zoomScale, focusX, focusY)
+            mChangeMatrix.postScale(zoomScale, zoomScale, mFocusPoint.x, mFocusPoint.y)
 
             // 更新最后起作用的矩阵
             updateDrawMatrix()
