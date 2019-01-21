@@ -3,6 +3,7 @@ package com.github.herokotlin.photocrop.view
 import android.content.Context
 import android.graphics.PointF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.R
@@ -38,11 +39,13 @@ class ForegroundView: FrameLayout {
 
     fun updateImageSize() {
         val size = photoView.imageSize
+        Log.d("photocrop", "1  size  $size")
         Util.updateSize(imageView, size.width, size.height)
     }
 
     fun updateImageOrigin() {
         val origin = photoView.imageOrigin
+        Log.d("photocrop", "2  origin  $origin")
         Util.updateOrigin(imageView, origin.x - x, origin.y - y)
     }
 

@@ -163,10 +163,12 @@ class PhotoCrop: FrameLayout {
     }
 
     private fun init() {
+
         LayoutInflater.from(context).inflate(R.layout.photo_crop, this)
 
         finderView.onCropAreaChange = {
             val rect = finderView.cropArea.toRect(width, height)
+            Log.d("photocrop", "croparea  ${finderView.cropArea} => ${rect.width()} ${rect.height()}")
             Util.updateView(foregroundView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
             Util.updateView(gridView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
             foregroundView.updateImageOrigin()
@@ -188,6 +190,7 @@ class PhotoCrop: FrameLayout {
 
         photoView.setImageResource(R.drawable.image)
         foregroundView.imageView.setImageResource(R.drawable.image)
+
     }
 
     private fun startAnimation(update: (Float) -> Unit, complete: (() -> Unit)? = null) {
@@ -264,13 +267,16 @@ class PhotoCrop: FrameLayout {
         val fromScale = photoView.scale
         val toScale = fromScale * scale
 
+        val translate = foregroundView.getTranslateAfterZoom(scale)
+
         startAnimation({ value ->
 
             this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
 
         })
-
-        photoView.startZoomAnimation(fromScale, toScale, fromCropArea.left + fromRect.width() / 2, fromCropArea.top + fromRect.height() / 2)
+Log.d("photocrop", "!!!! $translate")
+        photoView.startZoomAnimation(fromScale, toScale, fromRect.left, fromRect.top)
+        photoView.startTranslateAnimation(translate.x, translate.y, LinearInterpolator())
 
     }
 

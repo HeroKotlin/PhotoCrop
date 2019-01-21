@@ -110,7 +110,7 @@ class PhotoView : ImageView {
         }
 
         set(value) {
-            zoom(value / scale, 0f, 0f, false)
+            zoom(value / scale, width / 2f, height / 2f, false)
         }
 
     var imageOrigin: PointF
@@ -319,12 +319,13 @@ class PhotoView : ImageView {
 
                 // 距离谁比较远就去谁
                 val to = if (maxScale - scale > scale - minScale) {
-                    mImageScaleFocusPoint.set(x, y)
                     maxScale
                 }
                 else {
                     minScale
                 }
+
+                mImageScaleFocusPoint.set(x, y)
 
                 startZoomAnimation(from, to, zoomDuration, zoomInterpolator)
 
@@ -415,6 +416,7 @@ class PhotoView : ImageView {
 
         mBaseMatrix.set(baseMatrix)
         mChangeMatrix.set(changeMatrix)
+
         updateDrawMatrix()
 
     }
@@ -430,8 +432,6 @@ class PhotoView : ImageView {
     private fun startZoomAnimation(from: Float, to: Float, duration: Long, interpolator: TimeInterpolator) {
 
         mZoomAnimator?.cancel()
-
-        Log.d("photocrop", "$mImageScaleFocusPoint   ($width, $height) ----- $imageOrigin $imageSize")
 
         val animator = ValueAnimator.ofFloat(from, to)
         var lastValue = from
@@ -460,7 +460,7 @@ class PhotoView : ImageView {
         // 计算缩放后的位移
         updateForRead({ _, changeMatrix ->
             val scale = to / from
-            changeMatrix.postScale(scale, scale, mImageScaleFocusPoint.x, mImageScaleFocusPoint.y)
+            changeMatrix.postScale(scale, scale, mImageScaleFocusPoint.x - paddingLeft, mImageScaleFocusPoint.y - paddingTop)
         }) {
             checkImageBounds { dx, dy ->
                 deltaX = dx
@@ -468,10 +468,10 @@ class PhotoView : ImageView {
             }
         }
 
+        Log.d("photoview", "deltaX: $deltaX, deltaY: $deltaY")
         if (deltaX != 0f || deltaY != 0f) {
             startTranslateAnimation(deltaX, deltaY, interpolator)
         }
-
 
         animator.start()
 
@@ -648,7 +648,7 @@ class PhotoView : ImageView {
             mImageScaleFocusPoint.set(focusX, focusY)
 
             // 缩放
-            mChangeMatrix.postScale(scaleFactor, scaleFactor, focusX, focusY)
+            mChangeMatrix.postScale(scaleFactor, scaleFactor, focusX - paddingLeft, focusY - paddingTop)
 
             // 更新最后起作用的矩阵
             updateDrawMatrix()
@@ -702,7 +702,7 @@ class PhotoView : ImageView {
         val viewHeight = mContentHeight
 
         val deltaX = when {
-            imageWidth <= viewWidth -> {
+            imageWidth < viewWidth -> {
                 (viewWidth - imageWidth) / 2 - imageRect.left
             }
             imageRect.left > 0 -> {
@@ -717,7 +717,7 @@ class PhotoView : ImageView {
         }
 
         val deltaY = when {
-            imageHeight <= viewHeight -> {
+            imageHeight < viewHeight -> {
                 (viewHeight - imageHeight) / 2 - mRect.top
             }
             imageRect.top > 0 -> {
