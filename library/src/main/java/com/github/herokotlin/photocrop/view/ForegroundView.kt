@@ -40,7 +40,7 @@ class ForegroundView: FrameLayout {
     fun updateImageSize() {
         val size = photoView.imageSize
         Log.d("photocrop", "1  size  $size")
-        Util.updateSize(imageView, size.width, size.height)
+        Util.updateSize(imageView, size.width.toInt(), size.height.toInt())
     }
 
     fun updateImageOrigin() {

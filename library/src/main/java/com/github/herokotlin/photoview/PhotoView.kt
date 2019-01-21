@@ -66,7 +66,7 @@ class PhotoView : ImageView {
     private val mRect = RectF()
 
     // 放大时的 focus point，方便再次双击缩小回去时，图片不会突然移动
-    private var mImageScaleFocusPoint = PointF()
+    private var mFocusPoint = PointF()
 
     // 当前的位移动画实例
     private var mTranslateAnimator: android.animation.Animator? = null
@@ -110,7 +110,7 @@ class PhotoView : ImageView {
         }
 
         set(value) {
-            zoom(value / scale, width / 2f, height / 2f, false)
+            zoom(value / scale, width / 2f, height / 2f)
         }
 
     var imageOrigin: PointF
@@ -134,7 +134,7 @@ class PhotoView : ImageView {
     var imageSize: Size
 
         get() {
-            return Size((mImageWidth * scale).toInt(), (mImageHeight * scale).toInt())
+            return Size(mImageWidth * scale, mImageHeight * scale)
         }
 
         set(value) {
@@ -233,7 +233,10 @@ class PhotoView : ImageView {
 
                 }
 
-                zoom(zoomFactor, focusPoint.x, focusPoint.y, true)
+                updateFocusPoint(focusPoint.x, focusPoint.y)
+
+
+                zoom(zoomFactor, mFocusPoint.x, mFocusPoint.y, true)
 
                 translate(focusPoint.x - lastFocusPoint.x, focusPoint.y - lastFocusPoint.y, true, true)
 
@@ -325,7 +328,7 @@ class PhotoView : ImageView {
                     minScale
                 }
 
-                mImageScaleFocusPoint.set(x, y)
+                updateFocusPoint(x, y)
 
                 startZoomAnimation(from, to, zoomDuration, zoomInterpolator)
 
@@ -423,7 +426,7 @@ class PhotoView : ImageView {
 
     fun startZoomAnimation(from: Float, to: Float, focusX: Float = width / 2f, focusY: Float = height / 2f) {
 
-        mImageScaleFocusPoint.set(focusX, focusY)
+        updateFocusPoint(focusX, focusY)
 
         startZoomAnimation(from, to, zoomDuration, zoomInterpolator)
 
@@ -441,7 +444,7 @@ class PhotoView : ImageView {
 
         animator.addUpdateListener {
             val value = it.animatedValue as Float
-            zoom(value / lastValue, mImageScaleFocusPoint.x, mImageScaleFocusPoint.y)
+            zoom(value / lastValue, mFocusPoint.x, mFocusPoint.y)
             lastValue = value
         }
 
@@ -454,24 +457,23 @@ class PhotoView : ImageView {
             }
         })
 
-        var deltaX = 0f
-        var deltaY = 0f
-
-        // 计算缩放后的位移
-        updateForRead({ _, changeMatrix ->
-            val scale = to / from
-            changeMatrix.postScale(scale, scale, mImageScaleFocusPoint.x - paddingLeft, mImageScaleFocusPoint.y - paddingTop)
-        }) {
-            checkImageBounds { dx, dy ->
-                deltaX = dx
-                deltaY = dy
-            }
-        }
-
-        Log.d("photoview", "deltaX: $deltaX, deltaY: $deltaY")
-        if (deltaX != 0f || deltaY != 0f) {
-            startTranslateAnimation(deltaX, deltaY, interpolator)
-        }
+//        var deltaX = 0f
+//        var deltaY = 0f
+//
+//        // 计算缩放后的位移
+//        updateForRead({ _, changeMatrix ->
+//            val scale = to / from
+//            changeMatrix.postScale(scale, scale, mFocusPoint.x, mFocusPoint.y)
+//        }) {
+//            checkImageBounds { dx, dy ->
+//                deltaX = dx
+//                deltaY = dy
+//            }
+//        }
+//
+//        if (deltaX != 0f || deltaY != 0f) {
+//            startTranslateAnimation(deltaX, deltaY, interpolator)
+//        }
 
         animator.start()
 
@@ -580,8 +582,8 @@ class PhotoView : ImageView {
 
             if (deltaX != 0f || deltaY != 0f) {
 
-                mImageScaleFocusPoint.x += deltaX
-                mImageScaleFocusPoint.y += deltaY
+//                mFocusPoint.x += deltaX
+//                mFocusPoint.y += deltaY
 
                 mChangeMatrix.postTranslate(deltaX, deltaY)
                 updateDrawMatrix()
@@ -640,15 +642,12 @@ class PhotoView : ImageView {
 
     }
 
-    private fun zoom(scaleFactor: Float, focusX: Float, focusY: Float, silent: Boolean = false): Boolean {
+    private fun zoom(zoomScale: Float, focusX: Float, focusY: Float, silent: Boolean = false): Boolean {
 
-        if (scaleFactor != 1f) {
-
-            // 记录中心点，方便双击缩小时，不会位移
-            mImageScaleFocusPoint.set(focusX, focusY)
+        if (zoomScale != 1f) {
 
             // 缩放
-            mChangeMatrix.postScale(scaleFactor, scaleFactor, focusX - paddingLeft, focusY - paddingTop)
+            mChangeMatrix.postScale(zoomScale, zoomScale, focusX, focusY)
 
             // 更新最后起作用的矩阵
             updateDrawMatrix()
@@ -825,7 +824,38 @@ class PhotoView : ImageView {
         return mMatrixValues[ whichValue ]
     }
 
-    data class Size(val width: Int, val height: Int)
+    private fun updateFocusPoint(x: Float, y: Float) {
+
+        // 经过测试，图片四角的 focusPoint 如下：
+        // 左上 (0, 0)
+        // 右上 (width - paddingLeft - paddingRight, 0)
+        // 左下 (0, height - paddingTop - paddingBottom)
+        // 右下 (width - paddingLeft - paddingRight, height - paddingTop - paddingBottom)
+
+        val minX = 0f
+        val minY = 0f
+        val maxX = (width - paddingLeft - paddingRight).toFloat()
+        val maxY = (height - paddingTop - paddingBottom).toFloat()
+
+        // 当用户在 photo view 上点击时
+        // 坐标落在 (0, 0) 到 (width, height) 范围内
+        // 此时要把相对 photo view 的坐标转换成相对图片的坐标
+
+        val origin = imageOrigin
+        val size = imageSize
+
+        val scaleX = (x - origin.x) / size.width
+        val scaleY = (y - origin.y) / size.height
+
+        // 最后的换算
+        val focusX = Math.min(Math.max(scaleX * maxX, minX), maxX)
+        val focusY = Math.min(Math.max(scaleY * maxY, minY), maxY)
+
+        mFocusPoint = PointF(focusX, focusY)
+
+    }
+
+    data class Size(val width: Float, val height: Float)
 
     enum class ScaleType {
         FIT,
