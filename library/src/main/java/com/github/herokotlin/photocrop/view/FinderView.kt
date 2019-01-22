@@ -60,6 +60,10 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
             field = value
 
+            if (!Util.isVisible(this)) {
+                return
+            }
+
             if (value) {
                 onInteractionStart()
             }

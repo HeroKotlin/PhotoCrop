@@ -3,9 +3,7 @@ package com.github.herokotlin.photocrop
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.PointF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
@@ -19,13 +17,6 @@ class PhotoCrop: FrameLayout {
 
     lateinit var configuration: PhotoCropConfiguration
 
-    private var cropArea = CropArea.zero
-
-        set(value) {
-            field = value
-            finderView.cropArea = value
-        }
-
     var isCropping = false
 
         set(value) {
@@ -36,7 +27,7 @@ class PhotoCrop: FrameLayout {
 
             field = value
 
-            var fromCropArea = cropArea
+            var fromCropArea = finderView.cropArea
             var toCropArea = fromCropArea
 
             var toContentInset = PhotoView.ContentInset.zero
@@ -71,7 +62,7 @@ class PhotoCrop: FrameLayout {
                     overlayView.alpha = alpha
                     finderView.alpha = alpha
 
-                    cropArea = fromCropArea.add(offsetCropArea.multiply(alpha))
+                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(alpha))
 
                 }
 
@@ -98,7 +89,7 @@ class PhotoCrop: FrameLayout {
                     overlayView.alpha = alpha
                     finderView.alpha = alpha
 
-                    cropArea = fromCropArea.add(offsetCropArea.multiply(value))
+                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
 
                 }
 
@@ -110,7 +101,7 @@ class PhotoCrop: FrameLayout {
                 photoView.resetMatrix(baseMatrix, changeMatrix)
             }, reader)
 
-            cropArea = fromCropArea
+            finderView.cropArea = fromCropArea
 
             offsetCropArea = toCropArea.minus(fromCropArea)
 
@@ -277,7 +268,7 @@ class PhotoCrop: FrameLayout {
         // 获取偏移量
         foregroundView.save()
 
-        this.cropArea = toCropArea
+        finderView.cropArea = toCropArea
         photoView.zoom(toScale / fromScale, true)
 
         val translate = foregroundView.restore()
@@ -285,11 +276,11 @@ class PhotoCrop: FrameLayout {
 
 
         // 开始动画
-        this.cropArea = fromCropArea
+        finderView.cropArea = fromCropArea
         photoView.zoom(fromScale / toScale, true)
 
         startAnimation({ value ->
-            this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
+            finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
         })
 
         photoView.startZoomAnimation(fromScale, toScale)
