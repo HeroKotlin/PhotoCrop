@@ -4,6 +4,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.model.CropArea
@@ -164,12 +165,16 @@ class PhotoCrop: FrameLayout {
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = {
             updateFinderMinSize()
-            finderView.addInteractionTimer()
             foregroundView.updateImageSize()
+            if (activeAnimator == null) {
+                finderView.addInteractionTimer()
+            }
         }
         photoView.onOriginChange = {
-            finderView.addInteractionTimer()
             foregroundView.updateImageOrigin()
+            if (activeAnimator == null) {
+                finderView.addInteractionTimer()
+            }
         }
         photoView.onReset = {
             foregroundView.updateImageSize()
@@ -184,15 +189,26 @@ class PhotoCrop: FrameLayout {
 
         this.configuration = configuration
 
+        val density = resources.displayMetrics.density
+
         finderView.cropRatio = configuration.cropRatio
-        finderView.maxWidth = configuration.finderMaxWidth
-        finderView.maxHeight = configuration.finderMaxHeight
+        finderView.maxWidth = configuration.finderMaxWidth * density
+        finderView.maxHeight = configuration.finderMaxHeight * density
 
     }
 
     fun setImage(url: String) {
         configuration.loadImage(photoView, url)
         configuration.loadImage(foregroundView.imageView, url)
+    }
+
+    fun crop() {
+
+        if (!isCropping) {
+            return
+        }
+
+
     }
 
     private fun startAnimation(update: (Float) -> Unit, complete: (() -> Unit)? = null) {
@@ -227,8 +243,8 @@ class PhotoCrop: FrameLayout {
 
         finderView.updateMinSize(
             photoView.maxScale / photoView.scale,
-            (configuration.finderMinWidth * density).toInt(),
-            (configuration.finderMinHeight * density).toInt()
+            configuration.finderMinWidth * density,
+            configuration.finderMinHeight * density
         )
 
     }

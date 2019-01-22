@@ -24,8 +24,8 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     var cropRatio = 1f
 
-    var maxWidth = 0
-    var maxHeight = 0
+    var maxWidth = 0f
+    var maxHeight = 0f
 
     var cropArea = CropArea.zero
 
@@ -44,8 +44,9 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     var normalizedCropArea = CropArea.zero
 
-    private var minWidth = 0
-    private var minHeight = 0
+    private var minWidth = 0f
+
+    private var minHeight = 0f
 
     private var lastTouchPoint = Point()
 
@@ -57,15 +58,15 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
         set(value) {
 
+            if (!Util.isVisible(this)) {
+                return
+            }
+
             if (field == value) {
                 return
             }
 
             field = value
-
-            if (!Util.isVisible(this)) {
-                return
-            }
 
             if (value) {
                 onInteractionStart()
@@ -121,12 +122,12 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     }
 
-    fun updateMinSize(scaleFactor: Float, minWidth: Int, minHeight: Int) {
+    fun updateMinSize(scaleFactor: Float, minWidth: Float, minHeight: Float) {
 
         val rect = normalizedCropArea.toRect(width, height)
 
-        this.minWidth = Math.max((rect.width() / scaleFactor).toInt(), minWidth)
-        this.minHeight = Math.max((rect.height() / scaleFactor).toInt(), minHeight)
+        this.minWidth = Math.max(rect.width() / scaleFactor, minWidth)
+        this.minHeight = Math.max(rect.height() / scaleFactor, minHeight)
 
     }
 
@@ -214,22 +215,22 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
         super.onSizeChanged(w, h, oldw, oldh)
 
-        var cropWidth = w - cornerButtonSize - 2 * cornerLineWidth
-        var cropHeight = (cropWidth / cropRatio).toInt()
+        var cropWidth = w.toFloat() - cornerButtonSize - 2 * cornerLineWidth
+        var cropHeight = cropWidth / cropRatio
 
         if (cropHeight > h) {
-            cropHeight = h - cornerButtonSize - 2 * cornerLineWidth
-            cropWidth = (cropHeight * cropRatio).toInt()
+            cropHeight = h.toFloat() - cornerButtonSize - 2 * cornerLineWidth
+            cropWidth = cropHeight * cropRatio
         }
 
         if (maxWidth > 0 && cropWidth > maxWidth) {
             cropWidth = maxWidth
-            cropHeight = (cropWidth / cropRatio).toInt()
+            cropHeight = cropWidth / cropRatio
         }
 
         if (maxHeight > 0 && cropHeight > maxHeight) {
             cropHeight = maxHeight
-            cropWidth = (cropHeight * cropRatio).toInt()
+            cropWidth = cropHeight * cropRatio
         }
 
         val vertical = (h - cropHeight) / 2f
