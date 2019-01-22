@@ -5,7 +5,6 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.model.CropArea
 import com.github.herokotlin.photocrop.util.Util
@@ -128,14 +127,6 @@ class PhotoCrop: FrameLayout {
         init()
     }
 
-    private val finderMinWidth: Int by lazy {
-        resources.getDimensionPixelSize(R.dimen.photo_crop_finder_min_width)
-    }
-
-    private val finderMinHeight: Int by lazy {
-        resources.getDimensionPixelSize(R.dimen.photo_crop_finder_min_height)
-    }
-
     private fun init() {
 
         LayoutInflater.from(context).inflate(R.layout.photo_crop, this)
@@ -178,6 +169,8 @@ class PhotoCrop: FrameLayout {
         this.configuration = configuration
 
         finderView.cropRatio = configuration.cropRatio
+        finderView.maxWidth = configuration.finderMaxWidth
+        finderView.maxHeight = configuration.finderMaxHeight
 
     }
 
@@ -214,10 +207,12 @@ class PhotoCrop: FrameLayout {
 
     private fun updateFinderMinSize() {
 
+        val density = resources.displayMetrics.density
+
         finderView.updateMinSize(
             photoView.maxScale / photoView.scale,
-            finderMinWidth,
-            finderMinHeight
+            (configuration.finderMinWidth * density).toInt(),
+            (configuration.finderMinHeight * density).toInt()
         )
 
     }

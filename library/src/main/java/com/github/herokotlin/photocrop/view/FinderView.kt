@@ -24,6 +24,9 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     var cropRatio = 1f
 
+    var maxWidth = 0
+    var maxHeight = 0
+
     var cropArea = CropArea.zero
 
         set(value) {
@@ -87,14 +90,6 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     private val cornerButtonSize: Int by lazy {
         resources.getDimensionPixelSize(R.dimen.photo_crop_finder_corner_button_size)
-    }
-
-    private val maxWidth: Int by lazy {
-        resources.getDimensionPixelSize(R.dimen.photo_crop_finder_max_width)
-    }
-
-    private val maxHeight: Int by lazy {
-        resources.getDimensionPixelSize(R.dimen.photo_crop_finder_max_height)
     }
 
     private val touchSlop: Float by lazy {

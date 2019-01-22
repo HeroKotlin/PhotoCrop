@@ -6,12 +6,6 @@
     <dimen name="photo_crop_finder_corner_line_size">22dp</dimen>
     <dimen name="photo_crop_finder_corner_button_size">60dp</dimen>
 
-    <dimen name="photo_crop_finder_min_width">60dp</dimen>
-    <dimen name="photo_crop_finder_min_height">60dp</dimen>
-
-    <dimen name="photo_crop_finder_max_width">0dp</dimen>
-    <dimen name="photo_crop_finder_max_height">0dp</dimen>
-
     <dimen name="photo_crop_grid_line_width">1px</dimen>
 
 </resources>
