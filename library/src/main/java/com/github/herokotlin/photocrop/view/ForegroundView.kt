@@ -14,11 +14,12 @@ class ForegroundView: FrameLayout {
 
     lateinit var photoView: PhotoView
 
-    private var oldX = 0f
-    private var oldY = 0f
-
     private var relativeX = 0f
     private var relativeY = 0f
+
+    // 貌似同步执行时，Util.updateSize() 之后立即获取不到正确的尺寸
+    // 因此这里存个变量，方便获取
+    private var imageSize = PhotoView.Size(0f, 0f)
 
     constructor(context: Context) : super(context) {
         init()
@@ -36,15 +37,15 @@ class ForegroundView: FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.photo_crop_foreground, this)
     }
 
-    fun bindPhotoView(photoView: PhotoView) {
+    fun bind(photoView: PhotoView) {
         this.photoView = photoView
         updateImageSize()
         updateImageOrigin()
     }
 
     fun updateImageSize() {
-        val size = photoView.imageSize
-        Util.updateSize(imageView, size.width.toInt(), size.height.toInt())
+        imageSize = photoView.imageSize
+        Util.updateSize(imageView, imageSize.width.toInt(), imageSize.height.toInt())
     }
 
     fun updateImageOrigin() {
@@ -54,20 +55,17 @@ class ForegroundView: FrameLayout {
 
     fun save() {
 
-        oldX = imageView.x
-        oldY = imageView.y
-
-        relativeX = oldX / imageView.width
-        relativeY = oldY / imageView.height
+        relativeX = imageView.x / imageSize.width
+        relativeY = imageView.y / imageSize.height
 
     }
 
     fun restore(): PointF {
 
-        val newX = imageView.width * relativeX
-        val newY = imageView.height * relativeY
+        val newX = imageSize.width * relativeX
+        val newY = imageSize.height * relativeY
 
-        return PointF(newX - oldX, newY - oldY)
+        return PointF(newX - imageView.x, newY - imageView.y)
 
     }
 

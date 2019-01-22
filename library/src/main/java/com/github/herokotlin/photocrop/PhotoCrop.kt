@@ -158,7 +158,7 @@ class PhotoCrop: FrameLayout {
             updateCropArea(finderView.normalizedCropArea)
         }
 
-        foregroundView.bindPhotoView(photoView)
+        foregroundView.bind(photoView)
 
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = {
@@ -248,26 +248,30 @@ class PhotoCrop: FrameLayout {
         val fromScale = photoView.scale
         val toScale = fromScale * scale
 
+        // 设置缩放焦点
+        photoView.setFocusPoint(fromRect.centerX(), fromRect.centerY())
+
+
 
         // 获取偏移量
         foregroundView.save()
 
         this.cropArea = toCropArea
-
-        photoView.setFocusPoint(fromRect.centerX(), fromRect.centerY())
         photoView.zoom(toScale / fromScale, true)
 
         val translate = foregroundView.restore()
 
 
-        // 开始动画
-        this.cropArea = fromCropArea
 
-        startAnimation({ value ->
-            this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
-        })
-
-        photoView.startZoomAnimation(fromScale, toScale)
+//        // 开始动画
+//        this.cropArea = fromCropArea
+//        photoView.zoom(fromScale / toScale, true)
+//
+//        startAnimation({ value ->
+//            this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
+//        })
+//
+//        photoView.startZoomAnimation(fromScale, toScale)
         photoView.startTranslateAnimation(translate.x, translate.y, photoView.zoomInterpolator)
 
     }
