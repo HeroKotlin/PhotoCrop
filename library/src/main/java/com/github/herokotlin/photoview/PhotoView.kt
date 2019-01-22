@@ -432,7 +432,7 @@ class PhotoView : ImageView {
 
     }
 
-    fun updateForRead(update: (Matrix, Matrix) -> Unit, read: () -> Unit) {
+    fun temp(update: (Matrix, Matrix) -> Unit, read: () -> Unit) {
 
         val baseMatrix = Matrix(mBaseMatrix)
         val changeMatrix = Matrix(mChangeMatrix)
@@ -485,7 +485,7 @@ class PhotoView : ImageView {
         var deltaY = 0f
 
         // 计算缩放后的位移
-        updateForRead({ _, changeMatrix ->
+        temp({ _, changeMatrix ->
             val scale = to / from
             changeMatrix.postScale(scale, scale, mFocusPoint.x, mFocusPoint.y)
         }) {

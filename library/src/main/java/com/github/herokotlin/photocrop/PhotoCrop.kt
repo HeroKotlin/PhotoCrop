@@ -105,7 +105,7 @@ class PhotoCrop: FrameLayout {
 
             photoView.contentInset = toContentInset
 
-            photoView.updateForRead({ baseMatrix, changeMatrix ->
+            photoView.temp({ baseMatrix, changeMatrix ->
                 photoView.resetMatrix(baseMatrix, changeMatrix)
             }, reader)
 
