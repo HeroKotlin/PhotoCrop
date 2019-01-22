@@ -26,6 +26,8 @@ class PhotoCrop: FrameLayout {
 
             field = value
 
+            finderView.stopInteraction()
+
             var fromCropArea = finderView.cropArea
             var toCropArea = fromCropArea
 
@@ -56,12 +58,16 @@ class PhotoCrop: FrameLayout {
 
                 }
 
-                animation = { alpha ->
+                val overlayFromAlpha = overlayView.alpha
+                val overlayOffsetAlpha = configuration.overlayAlphaNormal - overlayFromAlpha
 
-                    overlayView.alpha = alpha
-                    finderView.alpha = alpha
 
-                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(alpha))
+                animation = {
+
+                    overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
+                    finderView.alpha = it
+
+                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
 
                 }
 
@@ -81,14 +87,14 @@ class PhotoCrop: FrameLayout {
 
                 }
 
-                animation = { value ->
+                animation = {
 
-                    val alpha = 1 - value
+                    val alpha = 1 - it
 
                     overlayView.alpha = alpha
                     finderView.alpha = alpha
 
-                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
+                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
 
                 }
 

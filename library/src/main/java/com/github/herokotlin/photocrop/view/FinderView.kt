@@ -285,7 +285,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         }
     }
 
-    private fun stopInteraction() {
+    fun stopInteraction() {
         removeInteractionTimer()
         isInteractive = false
     }
