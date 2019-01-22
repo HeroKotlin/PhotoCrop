@@ -124,26 +124,6 @@ class PhotoCrop: FrameLayout {
 
     private var activeAnimator: ValueAnimator? = null
 
-    private var onScaleChange = {
-        updateFinderMinSize()
-        foregroundView.updateImageSize()
-    }
-
-    private var onOriginChange = {
-        foregroundView.updateImageOrigin()
-    }
-
-    private var onCropAreaResize = {
-        updateCropArea(finderView.normalizedCropArea)
-    }
-
-    private var onCropAreaChange = {
-        val rect = finderView.cropArea.toRect(width, height)
-        Util.updateView(foregroundView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
-        Util.updateView(gridView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
-        foregroundView.updateImageOrigin()
-    }
-
     constructor(context: Context) : super(context) {
         init()
     }
@@ -168,12 +148,24 @@ class PhotoCrop: FrameLayout {
 
         LayoutInflater.from(context).inflate(R.layout.photo_crop, this)
 
-        finderView.onCropAreaChange = onCropAreaChange
-        finderView.onCropAreaResize = onCropAreaResize
+        finderView.onCropAreaChange = {
+            val rect = finderView.cropArea.toRect(width, height)
+            Util.updateView(foregroundView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
+            Util.updateView(gridView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
+            foregroundView.updateImageOrigin()
+        }
+        finderView.onCropAreaResize = {
+            updateCropArea(finderView.normalizedCropArea)
+        }
 
         photoView.scaleType = PhotoView.ScaleType.FIT
-        photoView.onScaleChange = onScaleChange
-        photoView.onOriginChange = onOriginChange
+        photoView.onScaleChange = {
+            updateFinderMinSize()
+            foregroundView.updateImageSize()
+        }
+        photoView.onOriginChange = {
+            foregroundView.updateImageOrigin()
+        }
         photoView.onReset = {
             foregroundView.updateImageSize()
             foregroundView.updateImageOrigin()
@@ -274,7 +266,6 @@ class PhotoCrop: FrameLayout {
         // 开始动画
         this.cropArea = fromCropArea
         photoView.zoom(fromScale / toScale, true)
-
 
         startAnimation({ value ->
             this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
