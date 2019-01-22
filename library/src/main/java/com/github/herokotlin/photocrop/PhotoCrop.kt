@@ -255,6 +255,8 @@ class PhotoCrop: FrameLayout {
         // 设置缩放焦点
         photoView.setFocusPoint(fromRect.centerX(), fromRect.centerY())
 
+
+
         // 获取偏移量
         foregroundView.save()
 
@@ -262,6 +264,8 @@ class PhotoCrop: FrameLayout {
         photoView.zoom(toScale / fromScale, true)
 
         val translate = foregroundView.restore()
+
+
 
         // 开始动画
         this.cropArea = fromCropArea
