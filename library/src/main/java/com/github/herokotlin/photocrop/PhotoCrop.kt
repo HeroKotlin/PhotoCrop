@@ -171,11 +171,15 @@ class PhotoCrop: FrameLayout {
         finderView.onCropAreaChange = onCropAreaChange
         finderView.onCropAreaResize = onCropAreaResize
 
-        foregroundView.bind(photoView)
-
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = onScaleChange
         photoView.onOriginChange = onOriginChange
+        photoView.onReset = {
+            foregroundView.updateImageSize()
+            foregroundView.updateImageOrigin()
+        }
+
+        foregroundView.photoView = photoView
 
         photoView.setImageResource(R.drawable.image)
         foregroundView.imageView.setImageResource(R.drawable.image)
@@ -276,6 +280,8 @@ class PhotoCrop: FrameLayout {
 //        // 开始动画
 //        this.cropArea = fromCropArea
 //        photoView.zoom(fromScale / toScale, true)
+
+        onCropAreaChange()
 
         finderView.onCropAreaChange = onCropAreaChange
         photoView.onOriginChange = onOriginChange

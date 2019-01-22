@@ -38,12 +38,6 @@ class ForegroundView: FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.photo_crop_foreground, this)
     }
 
-    fun bind(photoView: PhotoView) {
-        this.photoView = photoView
-        updateImageSize()
-        updateImageOrigin()
-    }
-
     fun updateImageSize() {
         imageSize = photoView.imageSize
         Util.updateSize(imageView, imageSize.width.toInt(), imageSize.height.toInt())
