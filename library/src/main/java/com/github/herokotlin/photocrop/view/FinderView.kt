@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.photo_crop_finder.view.*
 
 internal class FinderView: FrameLayout, View.OnTouchListener {
 
-    lateinit var onCropAreaChange: () -> Unit
-    lateinit var onCropAreaResize: () -> Unit
+    var onCropAreaChange: (() -> Unit)? = null
+    var onCropAreaResize: (() -> Unit)? = null
 
     var cropRatio = 1
 
@@ -32,7 +32,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
             field = value
 
             update()
-            onCropAreaChange()
+            onCropAreaChange?.invoke()
 
         }
 
@@ -233,7 +233,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
     private fun resizeCropArea() {
         removeResizeCropAreaTimer()
         if (Util.isVisible(this)) {
-            onCropAreaResize()
+            onCropAreaResize?.invoke()
         }
     }
 

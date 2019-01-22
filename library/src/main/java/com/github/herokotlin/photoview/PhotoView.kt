@@ -580,7 +580,7 @@ class PhotoView : ImageView {
     /**
      * 平移，如果超出允许平移的边界或没移动，返回 false
      */
-    private fun translate(dx: Float, dy: Float, checkBounds: Boolean = false, silent: Boolean = false): Boolean {
+    fun translate(dx: Float, dy: Float, checkBounds: Boolean = false, silent: Boolean = false): Boolean {
 
         var deltaX = dx
         var deltaY = dy
