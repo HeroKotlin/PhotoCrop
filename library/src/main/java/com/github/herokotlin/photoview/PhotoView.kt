@@ -60,16 +60,16 @@ class PhotoView : ImageView {
 
     // 方便读取矩阵的值，创建一个公用的数组
     private val mMatrixValues = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
-
-    // 放大时的 focus point，方便再次双击缩小回去时，图片不会突然移动
-    private var mFocusPoint = PointF()
-
+    
     // 当前的位移动画实例
     private var mTranslateAnimator: android.animation.Animator? = null
 
     // 当前的缩放动画实例
     private var mZoomAnimator: android.animation.Animator? = null
 
+    // 放大时的 focus point，方便再次双击缩小回去时，图片不会突然移动
+    private var mFocusPoint = PointF()
+    
     // 拖拽方向
     var draggableDirection = DIRECTION_ALL
 
@@ -258,7 +258,7 @@ class PhotoView : ImageView {
 
                 }
 
-                updateFocusPoint(focusPoint.x, focusPoint.y)
+                setFocusPoint(focusPoint.x, focusPoint.y)
 
                 zoom(zoomFactor, true)
 
@@ -354,7 +354,7 @@ class PhotoView : ImageView {
                     minScale
                 }
 
-                updateFocusPoint(x, y)
+                setFocusPoint(x, y)
 
                 startZoomAnimation(from, to, zoomDuration, zoomInterpolator)
 
@@ -450,9 +450,7 @@ class PhotoView : ImageView {
 
     }
 
-    fun startZoomAnimation(from: Float, to: Float, focusX: Float = width / 2f, focusY: Float = height / 2f) {
-
-        updateFocusPoint(focusX, focusY)
+    fun startZoomAnimation(from: Float, to: Float) {
 
         startZoomAnimation(from, to, zoomDuration, zoomInterpolator)
 
@@ -668,7 +666,7 @@ class PhotoView : ImageView {
 
     }
 
-    private fun zoom(factor: Float, silent: Boolean = false) {
+    fun zoom(factor: Float, silent: Boolean = false) {
 
         if (factor == 1f) {
             return
@@ -813,34 +811,7 @@ class PhotoView : ImageView {
         minScale = scale
     }
 
-    private fun updateBaseMatrix(silent: Boolean) {
-
-        if (mImageWidth > 0 && mImageHeight > 0) {
-
-            resetMatrix(mBaseMatrix, mChangeMatrix)
-            updateDrawMatrix()
-            updateLimitScale()
-
-            if (!silent) {
-                imageMatrix = mDrawMatrix
-                onReset?.invoke()
-            }
-
-        }
-    }
-
-    private fun updateDrawMatrix() {
-        mDrawMatrix.set(mBaseMatrix)
-        mDrawMatrix.postConcat(mChangeMatrix)
-    }
-
-    // getValue(imageMatrix, Matrix.MTRANS_X)
-    private fun getValue(matrix: Matrix, whichValue: Int): Float {
-        matrix.getValues(mMatrixValues)
-        return mMatrixValues[ whichValue ]
-    }
-
-    private fun updateFocusPoint(x: Float, y: Float) {
+    fun setFocusPoint(x: Float, y: Float) {
 
         // 经过测试，图片四角的 focusPoint 如下：
         val minX = contentInset.left
@@ -890,8 +861,35 @@ class PhotoView : ImageView {
             }
         }
 
-        mFocusPoint = PointF(focusX, focusY)
+        mFocusPoint.set(focusX, focusY)
 
+    }
+
+    private fun updateBaseMatrix(silent: Boolean) {
+
+        if (mImageWidth > 0 && mImageHeight > 0) {
+
+            resetMatrix(mBaseMatrix, mChangeMatrix)
+            updateDrawMatrix()
+            updateLimitScale()
+
+            if (!silent) {
+                imageMatrix = mDrawMatrix
+                onReset?.invoke()
+            }
+
+        }
+    }
+
+    private fun updateDrawMatrix() {
+        mDrawMatrix.set(mBaseMatrix)
+        mDrawMatrix.postConcat(mChangeMatrix)
+    }
+
+    // getValue(imageMatrix, Matrix.MTRANS_X)
+    private fun getValue(matrix: Matrix, whichValue: Int): Float {
+        matrix.getValues(mMatrixValues)
+        return mMatrixValues[ whichValue ]
     }
 
     data class Size(

@@ -3,6 +3,7 @@ package com.github.herokotlin.photocrop
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
@@ -116,6 +117,7 @@ class PhotoCrop: FrameLayout {
                 photoView.updateLimitScale()
             }
 
+            photoView.setFocusPoint(width / 2f, height / 2f)
             photoView.startZoomAnimation(fromScale, toScale)
 
         }
@@ -178,8 +180,8 @@ class PhotoCrop: FrameLayout {
 
         val animator = ValueAnimator.ofFloat(0f, 1f)
 
-        animator.duration = 300
-        animator.interpolator = LinearInterpolator()
+        animator.duration = photoView.zoomDuration
+        animator.interpolator = photoView.zoomInterpolator
         animator.addUpdateListener {
             update(it.animatedValue as Float)
         }
@@ -246,11 +248,27 @@ class PhotoCrop: FrameLayout {
         val fromScale = photoView.scale
         val toScale = fromScale * scale
 
+
+        // 获取偏移量
+        foregroundView.save()
+
+        this.cropArea = toCropArea
+
+        photoView.setFocusPoint(fromRect.centerX(), fromRect.centerY())
+        photoView.zoom(toScale / fromScale, true)
+
+        val translate = foregroundView.restore()
+
+
+        // 开始动画
+        this.cropArea = fromCropArea
+
         startAnimation({ value ->
             this.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
         })
 
-        photoView.startZoomAnimation(fromScale, toScale, fromRect.centerX(), fromRect.centerY())
+        photoView.startZoomAnimation(fromScale, toScale)
+        photoView.startTranslateAnimation(translate.x, translate.y, photoView.zoomInterpolator)
 
     }
 
