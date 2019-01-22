@@ -3,7 +3,6 @@ package com.github.herokotlin.photocrop.view
 import android.content.Context
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.R
@@ -11,7 +10,7 @@ import com.github.herokotlin.photocrop.util.Util
 import com.github.herokotlin.photoview.PhotoView
 import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 
-class ForegroundView: FrameLayout {
+internal class ForegroundView: FrameLayout {
 
     lateinit var photoView: PhotoView
 
@@ -53,16 +52,12 @@ class ForegroundView: FrameLayout {
         relativeX = imageView.x / imageSize.width
         relativeY = imageView.y / imageSize.height
 
-        Log.d("photocrop", "restore $relativeX,$relativeY  ${imageView.x},${imageView.y}  $imageSize")
-
     }
 
     fun restore(): PointF {
 
         val newX = imageSize.width * relativeX
         val newY = imageSize.height * relativeY
-
-        Log.d("photocrop", "restore $newX,$newY  ${imageView.x},${imageView.y}  $imageSize")
 
         return PointF(newX - imageView.x, newY - imageView.y)
 

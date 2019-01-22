@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 
 class PhotoCrop: FrameLayout {
 
+    lateinit var configuration: PhotoCropConfiguration
+
     private var cropArea = CropArea.zero
 
         set(value) {
@@ -68,7 +70,6 @@ class PhotoCrop: FrameLayout {
 
                     overlayView.alpha = alpha
                     finderView.alpha = alpha
-                    gridView.alpha = alpha
 
                     cropArea = fromCropArea.add(offsetCropArea.multiply(alpha))
 
@@ -78,6 +79,7 @@ class PhotoCrop: FrameLayout {
             else {
 
                 foregroundView.alpha = 0f
+                gridView.alpha = 0f
 
                 photoView.scaleType = PhotoView.ScaleType.FIT
 
@@ -95,7 +97,6 @@ class PhotoCrop: FrameLayout {
 
                     overlayView.alpha = alpha
                     finderView.alpha = alpha
-                    gridView.alpha = alpha
 
                     cropArea = fromCropArea.add(offsetCropArea.multiply(value))
 
@@ -157,6 +158,12 @@ class PhotoCrop: FrameLayout {
         finderView.onCropAreaResize = {
             updateCropArea(finderView.normalizedCropArea)
         }
+        finderView.onInteractionStart = {
+            updateInteractionState(configuration.overlayAlphaInteractive, 1f)
+        }
+        finderView.onInteractionEnd = {
+            updateInteractionState(configuration.overlayAlphaNormal, 0f)
+        }
 
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = {
@@ -173,9 +180,19 @@ class PhotoCrop: FrameLayout {
 
         foregroundView.photoView = photoView
 
-        photoView.setImageResource(R.drawable.image)
-        foregroundView.imageView.setImageResource(R.drawable.image)
+    }
 
+    fun init(configuration: PhotoCropConfiguration) {
+
+        this.configuration = configuration
+
+        finderView.cropRatio = configuration.cropRatio
+
+    }
+
+    fun setImage(url: String) {
+        configuration.loadImage(photoView, url)
+        configuration.loadImage(foregroundView.imageView, url)
     }
 
     private fun startAnimation(update: (Float) -> Unit, complete: (() -> Unit)? = null) {
@@ -277,6 +294,21 @@ class PhotoCrop: FrameLayout {
 
         photoView.startZoomAnimation(fromScale, toScale)
         photoView.startTranslateAnimation(translate.x, translate.y, photoView.zoomInterpolator)
+
+    }
+
+    private fun updateInteractionState(overlayAlpha: Float, gridAlpha: Float) {
+
+        val overlayFromAlpha = overlayView.alpha
+        val overlayOffsetAlpha = overlayAlpha - overlayFromAlpha
+
+        val gridFromAlpha = gridView.alpha
+        val gridOffsetAlpha = gridAlpha - gridFromAlpha
+
+        startAnimation({
+            overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
+            gridView.alpha = gridFromAlpha + it * gridOffsetAlpha
+        })
 
     }
 

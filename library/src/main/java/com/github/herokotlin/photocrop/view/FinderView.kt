@@ -16,10 +16,13 @@ import kotlinx.android.synthetic.main.photo_crop_finder.view.*
 
 internal class FinderView: FrameLayout, View.OnTouchListener {
 
-    var onCropAreaChange: (() -> Unit)? = null
-    var onCropAreaResize: (() -> Unit)? = null
+    lateinit var onCropAreaChange: () -> Unit
+    lateinit var onCropAreaResize: () -> Unit
 
-    var cropRatio = 1
+    lateinit var onInteractionStart: () -> Unit
+    lateinit var onInteractionEnd: () -> Unit
+
+    var cropRatio = 1f
 
     var cropArea = CropArea.zero
 
@@ -32,7 +35,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
             field = value
 
             update()
-            onCropAreaChange?.invoke()
+            onCropAreaChange()
 
         }
 
@@ -44,6 +47,27 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
     private var lastTouchPoint = Point()
 
     private var resizeCropAreaTimer: Runnable? = null
+
+    private var interactionTimer: Runnable? = null
+
+    private var isInteractive = false
+
+        set(value) {
+
+            if (field == value) {
+                return
+            }
+
+            field = value
+
+            if (value) {
+                onInteractionStart()
+            }
+            else {
+                onInteractionEnd()
+            }
+
+        }
 
     private val borderWidth: Int by lazy {
         resources.getDimensionPixelSize(R.dimen.photo_crop_finder_border_width)
@@ -94,6 +118,11 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         bottomLeftButton.setOnTouchListener(this)
         bottomRightButton.setOnTouchListener(this)
 
+        setOnTouchListener { _, _ ->
+            addInteractionTimer()
+            false
+        }
+
         update()
 
     }
@@ -109,7 +138,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
 
-        if (view == null || event == null || !Util.isVisible(this) || resizeCropAreaTimer != null) {
+        if (view == null || event == null || !Util.isVisible(this)) {
             return false
         }
 
@@ -121,8 +150,14 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         when (event.actionMasked) {
 
             MotionEvent.ACTION_DOWN -> {
+
+                if (resizeCropAreaTimer != null) {
+                    return false
+                }
+
                 lastTouchPoint.x = x
                 lastTouchPoint.y = y
+
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -169,15 +204,10 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
                     cropArea = CropArea(top, left, viewHeight - bottom, viewWidth - right)
 
+                    addInteractionTimer()
+                    addResizeCropAreaTimer()
                 }
 
-            }
-
-            MotionEvent.ACTION_UP -> {
-                resizeCropAreaTimer = Runnable {
-                    resizeCropArea()
-                }
-                postDelayed(resizeCropAreaTimer, 500)
             }
 
         }
@@ -191,21 +221,21 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         super.onSizeChanged(w, h, oldw, oldh)
 
         var cropWidth = w - cornerButtonSize - 2 * cornerLineWidth
-        var cropHeight = cropWidth / cropRatio
+        var cropHeight = (cropWidth / cropRatio).toInt()
 
         if (cropHeight > h) {
             cropHeight = h - cornerButtonSize - 2 * cornerLineWidth
-            cropWidth = cropHeight * cropRatio
+            cropWidth = (cropHeight * cropRatio).toInt()
         }
 
         if (maxWidth > 0 && cropWidth > maxWidth) {
             cropWidth = maxWidth
-            cropHeight = cropWidth / cropRatio
+            cropHeight = (cropWidth / cropRatio).toInt()
         }
 
         if (maxHeight > 0 && cropHeight > maxHeight) {
             cropHeight = maxHeight
-            cropWidth = cropHeight * cropRatio
+            cropWidth = (cropHeight * cropRatio).toInt()
         }
 
         val vertical = (h - cropHeight) / 2f
@@ -223,6 +253,14 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     }
 
+    private fun addResizeCropAreaTimer() {
+        removeResizeCropAreaTimer()
+        resizeCropAreaTimer = Runnable {
+            resizeCropArea()
+        }
+        postDelayed(resizeCropAreaTimer, 500)
+    }
+
     private fun removeResizeCropAreaTimer() {
         resizeCropAreaTimer?.let {
             removeCallbacks(it)
@@ -230,11 +268,32 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         resizeCropAreaTimer = null
     }
 
+    private fun addInteractionTimer() {
+        removeInteractionTimer()
+        interactionTimer = Runnable {
+            stopInteraction()
+        }
+        postDelayed(interactionTimer, 1000)
+        isInteractive = true
+    }
+
+    private fun removeInteractionTimer() {
+        interactionTimer?.let {
+            removeCallbacks(it)
+        }
+        interactionTimer = null
+    }
+
     private fun resizeCropArea() {
         removeResizeCropAreaTimer()
         if (Util.isVisible(this)) {
-            onCropAreaResize?.invoke()
+            onCropAreaResize()
         }
+    }
+
+    private fun stopInteraction() {
+        removeInteractionTimer()
+        isInteractive = false
     }
 
     private fun update() {

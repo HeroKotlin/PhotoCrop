@@ -1,0 +1,27 @@
+package com.github.herokotlin.photocrop
+
+import android.widget.ImageView
+
+abstract class PhotoCropConfiguration {
+
+    /**
+     * 裁剪比例
+     */
+    var cropRatio = 1f
+
+    /**
+     * 不在交互时 Overlay 的透明度
+     */
+    var overlayAlphaNormal = 1f
+
+    /**
+     * 正在交互时 Overlay 的透明度
+     */
+    var overlayAlphaInteractive = 0.2f
+
+    /**
+     * 加载图片
+     */
+    abstract fun loadImage(imageView: ImageView, url: String)
+
+}
