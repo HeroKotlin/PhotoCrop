@@ -117,11 +117,6 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         bottomLeftButton.setOnTouchListener(this)
         bottomRightButton.setOnTouchListener(this)
 
-        setOnTouchListener { _, _ ->
-            addInteractionTimer()
-            false
-        }
-
         update()
 
     }
@@ -267,7 +262,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         resizeCropAreaTimer = null
     }
 
-    private fun addInteractionTimer() {
+    fun addInteractionTimer() {
         removeInteractionTimer()
         interactionTimer = Runnable {
             stopInteraction()

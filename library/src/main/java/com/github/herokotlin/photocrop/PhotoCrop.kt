@@ -150,9 +150,11 @@ class PhotoCrop: FrameLayout {
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = {
             updateFinderMinSize()
+            finderView.addInteractionTimer()
             foregroundView.updateImageSize()
         }
         photoView.onOriginChange = {
+            finderView.addInteractionTimer()
             foregroundView.updateImageOrigin()
         }
         photoView.onReset = {
