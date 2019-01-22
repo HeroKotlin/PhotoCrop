@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 
 class PhotoCrop: FrameLayout {
 
-    lateinit var configuration: PhotoCropConfiguration
+    private lateinit var configuration: PhotoCropConfiguration
 
     var isCropping = false
 
@@ -40,6 +40,7 @@ class PhotoCrop: FrameLayout {
 
             val reader: () -> Unit
             val animation: (Float) -> Unit
+            val complete: () -> Unit
 
             if (value) {
 
@@ -71,10 +72,13 @@ class PhotoCrop: FrameLayout {
 
                 }
 
+                complete = {
+                    photoView.updateLimitScale()
+                }
+
             }
             else {
 
-                foregroundView.alpha = 0f
                 gridView.alpha = 0f
 
                 photoView.scaleType = PhotoView.ScaleType.FIT
@@ -94,8 +98,14 @@ class PhotoCrop: FrameLayout {
                     overlayView.alpha = alpha
                     finderView.alpha = alpha
 
+
                     finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
 
+                }
+
+                complete = {
+                    photoView.updateLimitScale()
+                    foregroundView.alpha = 0f
                 }
 
             }
@@ -110,9 +120,7 @@ class PhotoCrop: FrameLayout {
 
             offsetCropArea = toCropArea.minus(fromCropArea)
 
-            startAnimation(animation) {
-                photoView.updateLimitScale()
-            }
+            startAnimation(animation, complete)
 
             photoView.setFocusPoint(width / 2f, height / 2f)
             photoView.startZoomAnimation(fromScale, toScale)
