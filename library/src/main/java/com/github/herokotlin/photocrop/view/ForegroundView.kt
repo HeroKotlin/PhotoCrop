@@ -14,8 +14,10 @@ internal class ForegroundView: FrameLayout {
 
     lateinit var photoView: PhotoView
 
-    private var relativeX = 0f
-    private var relativeY = 0f
+    var relativeX = 0f
+    var relativeY = 0f
+    var relativeWidth = 0f
+    var relativeHeight = 0f
 
     // 貌似同步执行时，Util.updateSize() 之后立即获取不到正确的尺寸
     // 因此这里存个变量，方便获取
@@ -51,6 +53,9 @@ internal class ForegroundView: FrameLayout {
 
         relativeX = imageView.x / imageSize.width
         relativeY = imageView.y / imageSize.height
+
+        relativeWidth = width / imageSize.width
+        relativeHeight = height / imageSize.height
 
     }
 

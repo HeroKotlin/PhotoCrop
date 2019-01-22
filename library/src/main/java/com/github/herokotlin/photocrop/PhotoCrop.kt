@@ -3,8 +3,8 @@ package com.github.herokotlin.photocrop
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.model.CropArea
@@ -12,10 +12,9 @@ import com.github.herokotlin.photocrop.util.Util
 import com.github.herokotlin.photoview.PhotoView
 import kotlinx.android.synthetic.main.photo_crop.view.*
 import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
+import android.graphics.drawable.BitmapDrawable
 
 class PhotoCrop: FrameLayout {
-
-    private lateinit var configuration: PhotoCropConfiguration
 
     var isCropping = false
 
@@ -130,6 +129,8 @@ class PhotoCrop: FrameLayout {
 
     private var activeAnimator: ValueAnimator? = null
 
+    private lateinit var configuration: PhotoCropConfiguration
+
     constructor(context: Context) : super(context) {
         init()
     }
@@ -202,12 +203,30 @@ class PhotoCrop: FrameLayout {
         configuration.loadImage(foregroundView.imageView, url)
     }
 
-    fun crop() {
+    fun crop(): Bitmap? {
 
         if (!isCropping) {
-            return
+            return null
         }
 
+        val drawable = photoView.drawable
+        if (drawable !is BitmapDrawable) {
+            return null
+        }
+
+        foregroundView.save()
+
+        val source = drawable.bitmap
+        val sourceWidth = source.width
+        val sourceHeight = source.height
+
+        return Bitmap.createBitmap(
+            source,
+            (Math.abs(foregroundView.relativeX) * sourceWidth).toInt(),
+            (Math.abs(foregroundView.relativeY) * sourceHeight).toInt(),
+            (foregroundView.relativeWidth * sourceWidth).toInt(),
+            (foregroundView.relativeHeight * sourceHeight).toInt()
+        )
 
     }
 
