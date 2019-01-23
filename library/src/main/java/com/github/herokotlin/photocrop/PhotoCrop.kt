@@ -172,21 +172,29 @@ class PhotoCrop: FrameLayout {
 
         photoView.scaleType = PhotoView.ScaleType.FIT
         photoView.onScaleChange = {
-            updateFinderMinSize()
-            foregroundView.updateImageSize()
-            if (isCropping && activeAnimator == null) {
-                finderView.addInteractionTimer()
+            if (finderView.alpha > 0) {
+                updateFinderMinSize()
+                if (activeAnimator == null) {
+                    finderView.addInteractionTimer()
+                }
+            }
+            if (foregroundView.alpha > 0) {
+                foregroundView.updateImageSize()
             }
         }
         photoView.onOriginChange = {
-            foregroundView.updateImageOrigin()
-            if (isCropping && activeAnimator == null) {
+            if (finderView.alpha > 0 && activeAnimator == null) {
                 finderView.addInteractionTimer()
+            }
+            if (foregroundView.alpha > 0) {
+                foregroundView.updateImageOrigin()
             }
         }
         photoView.onReset = {
-            foregroundView.updateImageSize()
-            foregroundView.updateImageOrigin()
+            if (foregroundView.alpha > 0) {
+                foregroundView.updateImageSize()
+                foregroundView.updateImageOrigin()
+            }
         }
 
         foregroundView.photoView = photoView
