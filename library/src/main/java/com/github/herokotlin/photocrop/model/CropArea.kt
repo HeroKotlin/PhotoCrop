@@ -14,10 +14,6 @@ data class CropArea(
         val zero = CropArea(0f, 0f, 0f, 0f)
     }
 
-    override fun toString(): String {
-        return "top: $top, left: $left, right: $right, bottom: $bottom"
-    }
-
     fun toRect(width: Int, height: Int): RectF {
         return RectF(left, top, width - right, height - bottom)
     }

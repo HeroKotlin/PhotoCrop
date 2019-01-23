@@ -16,6 +16,8 @@ import kotlinx.android.synthetic.main.photo_crop.view.*
 import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 import android.graphics.drawable.BitmapDrawable
 import android.view.animation.DecelerateInterpolator
+import com.github.herokotlin.photocrop.model.CropFile
+import java.io.File
 import java.io.FileOutputStream
 
 class PhotoCrop: FrameLayout {
@@ -264,30 +266,27 @@ class PhotoCrop: FrameLayout {
         val width = foregroundView.relativeWidth * sourceWidth
         val height = foregroundView.relativeHeight * sourceHeight
 
-        val matrix = Matrix()
-        matrix.setScale(configuration.cropWidth / width, configuration.cropHeight / height)
-
         return Bitmap.createBitmap(
             source,
             (Math.floor(x.toDouble())).toInt(),
             (Math.floor(y.toDouble())).toInt(),
             (Math.round(width.toDouble())).toInt(),
-            (Math.round(height.toDouble())).toInt(),
-            matrix,
-            true
+            (Math.round(height.toDouble())).toInt()
         )
 
     }
 
-    fun save(bitmap: Bitmap): String {
+    fun save(bitmap: Bitmap): CropFile {
 
-        val filename = Util.getFilePath(context.externalCacheDir.absolutePath, ".jpg")
+        val path = Util.getFilePath(context.externalCacheDir.absolutePath, ".jpg")
 
-        val output = FileOutputStream(filename)
+        val output = FileOutputStream(path)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
         output.close()
 
-        return filename
+        val file = File(path)
+
+        return CropFile(path, file.length(), bitmap.width, bitmap.height)
 
     }
 
