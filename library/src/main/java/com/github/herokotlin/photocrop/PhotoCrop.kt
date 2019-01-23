@@ -223,6 +223,22 @@ class PhotoCrop: FrameLayout {
         foregroundView.imageView.setImageBitmap(bitmap)
     }
 
+    fun reset() {
+
+        val fromScale = photoView.scale
+        var toScale = fromScale
+
+        photoView.temp({ baseMatrix, changeMatrix ->
+            photoView.resetMatrix(baseMatrix, changeMatrix)
+        }) {
+            toScale = photoView.scale
+        }
+
+        photoView.setFocusPoint(width / 2f, height / 2f)
+        photoView.startZoomAnimation(fromScale, toScale)
+
+    }
+
     fun crop(): Bitmap? {
 
         if (!isCropping) {
