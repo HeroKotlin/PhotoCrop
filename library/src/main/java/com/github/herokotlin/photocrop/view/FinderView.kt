@@ -24,6 +24,9 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     var cropRatio = 1f
 
+    var minWidth = 0f
+    var minHeight = 0f
+
     var maxWidth = 0f
     var maxHeight = 0f
 
@@ -43,10 +46,6 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         }
 
     var normalizedCropArea = CropArea.zero
-
-    private var minWidth = 0f
-
-    private var minHeight = 0f
 
     private var lastTouchPoint = Point()
 
@@ -119,15 +118,6 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
         bottomRightButton.setOnTouchListener(this)
 
         update()
-
-    }
-
-    fun updateMinSize(scaleFactor: Float, minWidth: Float, minHeight: Float) {
-
-        val rect = normalizedCropArea.toRect(width, height)
-
-        this.minWidth = Math.max(rect.width() / scaleFactor, minWidth)
-        this.minHeight = Math.max(rect.height() / scaleFactor, minHeight)
 
     }
 

@@ -5,9 +5,14 @@ import android.widget.ImageView
 abstract class PhotoCropConfiguration {
 
     /**
-     * 裁剪比例
+     * 裁剪宽度，单位是像素，必传
      */
-    var cropRatio = 1f
+    var cropWidth = 0f
+
+    /**
+     * 裁剪高度，单位是像素，必传
+     */
+    var cropHeight = 0f
 
     /**
      * 裁剪框最大宽度，0 表示不限制
@@ -22,12 +27,12 @@ abstract class PhotoCropConfiguration {
     /**
      * 裁剪框最小宽度
      */
-    var finderMinWidth = 60
+    var finderMinWidth = 30
 
     /**
      * 裁剪框最小高度
      */
-    var finderMinHeight = 60
+    var finderMinHeight = 30
 
     /**
      * 不在交互时 Overlay 的透明度

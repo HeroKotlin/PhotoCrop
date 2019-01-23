@@ -5,6 +5,7 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.main.photo_crop.view.*
 import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 import android.graphics.drawable.BitmapDrawable
 import android.view.animation.DecelerateInterpolator
+import java.io.FileOutputStream
 
 class PhotoCrop: FrameLayout {
 
@@ -196,6 +198,7 @@ class PhotoCrop: FrameLayout {
                 foregroundView.updateImageOrigin()
             }
         }
+        photoView.calculateMaxScale = { 1f }
 
         foregroundView.photoView = photoView
 
@@ -207,7 +210,7 @@ class PhotoCrop: FrameLayout {
 
         val density = resources.displayMetrics.density
 
-        finderView.cropRatio = configuration.cropRatio
+        finderView.cropRatio = configuration.cropWidth / configuration.cropHeight
         finderView.maxWidth = configuration.finderMaxWidth * density
         finderView.maxHeight = configuration.finderMaxHeight * density
 
@@ -256,13 +259,35 @@ class PhotoCrop: FrameLayout {
         val sourceWidth = source.width
         val sourceHeight = source.height
 
+        val x = Math.abs(foregroundView.relativeX) * sourceWidth
+        val y = Math.abs(foregroundView.relativeY) * sourceHeight
+        val width = foregroundView.relativeWidth * sourceWidth
+        val height = foregroundView.relativeHeight * sourceHeight
+
+        val matrix = Matrix()
+        matrix.setScale(configuration.cropWidth / width, configuration.cropHeight / height)
+
         return Bitmap.createBitmap(
             source,
-            (Math.abs(foregroundView.relativeX) * sourceWidth).toInt(),
-            (Math.abs(foregroundView.relativeY) * sourceHeight).toInt(),
-            (foregroundView.relativeWidth * sourceWidth).toInt(),
-            (foregroundView.relativeHeight * sourceHeight).toInt()
+            (Math.floor(x.toDouble())).toInt(),
+            (Math.floor(y.toDouble())).toInt(),
+            (Math.round(width.toDouble())).toInt(),
+            (Math.round(height.toDouble())).toInt(),
+            matrix,
+            true
         )
+
+    }
+
+    fun save(bitmap: Bitmap): String {
+
+        val filename = Util.getFilePath(context.externalCacheDir.absolutePath, ".jpg")
+
+        val output = FileOutputStream(filename)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+        output.close()
+
+        return filename
 
     }
 
@@ -296,11 +321,36 @@ class PhotoCrop: FrameLayout {
 
         val density = resources.displayMetrics.density
 
-        finderView.updateMinSize(
-            photoView.maxScale / photoView.scale,
-            configuration.finderMinWidth * density,
-            configuration.finderMinHeight * density
-        )
+        val cropWidth = configuration.cropWidth
+        val cropHeight = configuration.cropHeight
+
+        val finderMinWidth = configuration.finderMinWidth * density
+        val finderMinHeight = configuration.finderMinHeight * density
+
+        // 有两个限制：
+        // 1. 裁剪框不能小于 finderMinWidth/finderMinHeight
+        // 2. 裁剪后的图片不能小余 cropWidth/cropHeight
+
+        val normalizedRect = finderView.normalizedCropArea.toRect(width, height)
+        val normalizedWidth = normalizedRect.width()
+        val normalizedHeight = normalizedRect.height()
+
+        // 这是裁剪框能缩放的最小尺寸
+        val scaleFactor = photoView.maxScale / photoView.scale
+        var finderWidth = Math.max(normalizedWidth / scaleFactor, finderMinWidth)
+        var finderHeight = Math.max(normalizedHeight / scaleFactor, finderMinHeight)
+
+        // 裁剪框尺寸对应的图片尺寸
+        // 因为 photoView 已到达 maxScale，因此裁剪框和图片是 1:1 的关系
+        if (finderWidth < cropWidth) {
+            finderWidth = cropWidth / scaleFactor
+        }
+        if (finderHeight < cropHeight) {
+            finderHeight = cropHeight / scaleFactor
+        }
+
+        finderView.minWidth = finderWidth
+        finderView.minHeight = finderHeight
 
     }
 
