@@ -1,6 +1,7 @@
 package com.github.herokotlin.photocrop
 
 import android.animation.AnimatorListenerAdapter
+import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Bitmap
@@ -13,6 +14,7 @@ import com.github.herokotlin.photoview.PhotoView
 import kotlinx.android.synthetic.main.photo_crop.view.*
 import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 import android.graphics.drawable.BitmapDrawable
+import android.view.animation.DecelerateInterpolator
 
 class PhotoCrop: FrameLayout {
 
@@ -120,7 +122,12 @@ class PhotoCrop: FrameLayout {
 
             offsetCropArea = toCropArea.minus(fromCropArea)
 
-            startAnimation(animation, complete)
+            startAnimation(
+                photoView.zoomDuration,
+                photoView.zoomInterpolator,
+                animation,
+                complete
+            )
 
             photoView.setFocusPoint(width / 2f, height / 2f)
             photoView.startZoomAnimation(fromScale, toScale)
@@ -235,14 +242,14 @@ class PhotoCrop: FrameLayout {
 
     }
 
-    private fun startAnimation(update: (Float) -> Unit, complete: (() -> Unit)? = null) {
+    private fun startAnimation(duration: Long, interpolator: TimeInterpolator, update: (Float) -> Unit, complete: (() -> Unit)? = null) {
 
         this.activeAnimator?.cancel()
 
         val animator = ValueAnimator.ofFloat(0f, 1f)
 
-        animator.duration = photoView.zoomDuration
-        animator.interpolator = photoView.zoomInterpolator
+        animator.duration = duration
+        animator.interpolator = interpolator
         animator.addUpdateListener {
             update(it.animatedValue as Float)
         }
@@ -330,9 +337,13 @@ class PhotoCrop: FrameLayout {
         finderView.cropArea = fromCropArea
         photoView.zoom(fromScale / toScale, true)
 
-        startAnimation({ value ->
-            finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(value))
-        })
+        startAnimation(
+            photoView.zoomDuration,
+            photoView.zoomInterpolator,
+            {
+                finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
+            }
+        )
 
         photoView.startZoomAnimation(fromScale, toScale)
         photoView.startTranslateAnimation(translate.x, translate.y, photoView.zoomInterpolator)
@@ -347,10 +358,14 @@ class PhotoCrop: FrameLayout {
         val gridFromAlpha = gridView.alpha
         val gridOffsetAlpha = gridAlpha - gridFromAlpha
 
-        startAnimation({
-            overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
-            gridView.alpha = gridFromAlpha + it * gridOffsetAlpha
-        })
+        startAnimation(
+            500,
+            DecelerateInterpolator(),
+            {
+                overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
+                gridView.alpha = gridFromAlpha + it * gridOffsetAlpha
+            }
+        )
 
     }
 
