@@ -198,9 +198,14 @@ class PhotoCrop: FrameLayout {
 
     }
 
-    fun setImage(url: String) {
+    fun setImageUrl(url: String) {
         configuration.loadImage(photoView, url)
         configuration.loadImage(foregroundView.imageView, url)
+    }
+
+    fun setImageBitmap(bitmap: Bitmap) {
+        photoView.setImageBitmap(bitmap)
+        foregroundView.imageView.setImageBitmap(bitmap)
     }
 
     fun crop(): Bitmap? {
