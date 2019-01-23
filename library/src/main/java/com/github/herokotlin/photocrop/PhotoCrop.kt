@@ -321,9 +321,6 @@ class PhotoCrop: FrameLayout {
 
         val density = resources.displayMetrics.density
 
-        val cropWidth = configuration.cropWidth
-        val cropHeight = configuration.cropHeight
-
         val finderMinWidth = configuration.finderMinWidth * density
         val finderMinHeight = configuration.finderMinHeight * density
 
@@ -337,17 +334,19 @@ class PhotoCrop: FrameLayout {
 
         // 这是裁剪框能缩放的最小尺寸
         val scaleFactor = photoView.maxScale / photoView.scale
-        var finderWidth = Math.max(normalizedWidth / scaleFactor, finderMinWidth)
-        var finderHeight = Math.max(normalizedHeight / scaleFactor, finderMinHeight)
+        val finderWidth = Math.max(normalizedWidth / scaleFactor, finderMinWidth)
+        val finderHeight = Math.max(normalizedHeight / scaleFactor, finderMinHeight)
 
         // 裁剪框尺寸对应的图片尺寸
         // 因为 photoView 已到达 maxScale，因此裁剪框和图片是 1:1 的关系
-        if (finderWidth < cropWidth) {
-            finderWidth = cropWidth / scaleFactor
-        }
-        if (finderHeight < cropHeight) {
-            finderHeight = cropHeight / scaleFactor
-        }
+//        val cropWidth = configuration.cropWidth
+//        val cropHeight = configuration.cropHeight
+//        if (finderWidth < cropWidth) {
+//            finderWidth = cropWidth / scaleFactor
+//        }
+//        if (finderHeight < cropHeight) {
+//            finderHeight = cropHeight / scaleFactor
+//        }
 
         finderView.minWidth = finderWidth
         finderView.minHeight = finderHeight
