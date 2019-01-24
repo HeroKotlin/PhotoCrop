@@ -47,9 +47,9 @@ class PhotoCropActivity: AppCompatActivity() {
 
         photoCrop.init(configuration)
 
-        loadImage(this, url) { bitmap ->
-            if (bitmap != null) {
-                photoCrop.setImageBitmap(bitmap)
+        loadImage(this, url) { image ->
+            if (image != null) {
+                photoCrop.image = image
                 photoCrop.postDelayed({
                     photoCrop.isCropping = true
                 }, 500)

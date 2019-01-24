@@ -20,6 +20,21 @@ import com.github.herokotlin.photocrop.util.Compressor
 
 class PhotoCrop: FrameLayout {
 
+    var image: Bitmap? = null
+
+        set(value) {
+
+            if (field == value) {
+                return
+            }
+
+            field = value
+
+            photoView.setImageBitmap(value)
+            foregroundView.imageView.setImageBitmap(value)
+
+        }
+
     var isCropping = false
 
         set(value) {
@@ -213,11 +228,6 @@ class PhotoCrop: FrameLayout {
         finderView.maxWidth = configuration.finderMaxWidth * density
         finderView.maxHeight = configuration.finderMaxHeight * density
 
-    }
-
-    fun setImageBitmap(bitmap: Bitmap) {
-        photoView.setImageBitmap(bitmap)
-        foregroundView.imageView.setImageBitmap(bitmap)
     }
 
     fun reset() {
