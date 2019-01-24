@@ -15,14 +15,14 @@
             android:layout_height="match_parent"
             android:alpha="0"/>
 
-    <com.github.herokotlin.photocrop.view.FinderView
-            android:id="@+id/finderView"
+    <com.github.herokotlin.photocrop.view.ForegroundView
+            android:id="@+id/foregroundView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0"/>
 
-    <com.github.herokotlin.photocrop.view.ForegroundView
-            android:id="@+id/foregroundView"
+    <com.github.herokotlin.photocrop.view.FinderView
+            android:id="@+id/finderView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0"/>

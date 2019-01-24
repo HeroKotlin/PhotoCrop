@@ -97,10 +97,8 @@ class PhotoCrop: FrameLayout {
 
                 animation = {
 
-                    val alpha = 1 - it
-
-                    overlayView.alpha = alpha
-                    finderView.alpha = alpha
+                    overlayView.alpha = 1 - it
+                    finderView.alpha = 1 - it
 
 
                     finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
@@ -191,7 +189,7 @@ class PhotoCrop: FrameLayout {
             if (foregroundView.alpha > 0) {
                 foregroundView.updateImageOrigin()
             }
-        }
+       }
         photoView.onReset = {
             if (foregroundView.alpha > 0) {
                 foregroundView.updateImageSize()

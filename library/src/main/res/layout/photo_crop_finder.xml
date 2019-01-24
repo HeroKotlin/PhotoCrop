@@ -8,72 +8,84 @@
         android:id="@+id/topBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_border_color"/>
 
     <View
         android:id="@+id/rightBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_border_color"/>
 
     <View
         android:id="@+id/bottomBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_border_color"/>
 
     <View
         android:id="@+id/leftBorder"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_border_color"/>
 
     <View
         android:id="@+id/topLeftHorizontalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_size"
         android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
         android:id="@+id/topLeftVerticalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_width"
         android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
         android:id="@+id/topRightHorizontalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_size"
         android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
         android:id="@+id/topRightVerticalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_width"
         android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
         android:id="@+id/bottomRightHorizontalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_size"
         android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
         android:id="@+id/bottomRightVerticalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_width"
         android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
         android:id="@+id/bottomLeftHorizontalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_size"
         android:layout_height="@dimen/photo_crop_finder_corner_line_width"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
         android:id="@+id/bottomLeftVerticalLine"
         android:layout_width="@dimen/photo_crop_finder_corner_line_width"
         android:layout_height="@dimen/photo_crop_finder_corner_line_size"
+        android:elevation="1dp"
         android:background="@color/photo_crop_finder_corner_line_color"/>
 
     <View
