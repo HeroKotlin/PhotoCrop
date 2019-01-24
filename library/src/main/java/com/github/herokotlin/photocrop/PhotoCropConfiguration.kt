@@ -27,12 +27,12 @@ abstract class PhotoCropConfiguration {
     /**
      * 裁剪框最小宽度
      */
-    var finderMinWidth = 50
+    var finderMinWidth = 60
 
     /**
      * 裁剪框最小高度
      */
-    var finderMinHeight = 50
+    var finderMinHeight = 60
 
     /**
      * 不在交互时 Overlay 的透明度
