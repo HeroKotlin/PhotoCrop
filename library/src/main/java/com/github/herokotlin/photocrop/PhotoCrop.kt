@@ -215,11 +215,6 @@ class PhotoCrop: FrameLayout {
 
     }
 
-    fun setImageUrl(url: String) {
-        configuration.loadImage(photoView, url)
-        configuration.loadImage(foregroundView.imageView, url)
-    }
-
     fun setImageBitmap(bitmap: Bitmap) {
         photoView.setImageBitmap(bitmap)
         foregroundView.imageView.setImageBitmap(bitmap)
@@ -279,9 +274,10 @@ class PhotoCrop: FrameLayout {
 
     }
 
-    fun compress(source: CropFile, maxSize: Int, quality: Float): CropFile {
+    fun compress(source: CropFile): CropFile {
 
-        return Compressor(maxSize, quality).compress(context, source, configuration.cropWidth.toInt(), configuration.cropHeight.toInt())
+        return Compressor(configuration.maxSize, configuration.quality)
+            .compress(context, source, configuration.cropWidth.toInt(), configuration.cropHeight.toInt())
 
     }
 

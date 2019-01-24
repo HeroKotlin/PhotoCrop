@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <com.github.herokotlin.photocrop.PhotoCrop
+            android:id="@+id/photoCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:padding="0dp"
+            android:background="@android:color/transparent"
+            android:textColor="#FFF"
+            android:textSize="15dp"
+            android:text="取消"/>
+
+    <Button
+            android:id="@+id/resetButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:padding="0dp"
+            android:background="@android:color/transparent"
+            android:textColor="#FFF"
+            android:textSize="15dp"
+            android:text="重置"/>
+
+    <Button
+            android:id="@+id/cropButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="20dp"
+            android:padding="0dp"
+            android:background="@android:color/transparent"
+            android:textColor="#FFF"
+            android:textSize="15dp"
+            android:text="确定"/>
+
+</RelativeLayout>
