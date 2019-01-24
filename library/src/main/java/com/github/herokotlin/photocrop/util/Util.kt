@@ -76,21 +76,4 @@ internal object Util {
 
     }
 
-    fun getInSampleSize(srcWidth: Int, srcHeight: Int, dstWidth: Int, dstHeight: Int): Int {
-
-        var inSampleSize = 1
-
-        if (srcWidth > dstWidth || srcHeight > dstHeight) {
-            val halfWidth = srcWidth / 2
-            val halfHeight = srcHeight / 2
-            do {
-                inSampleSize *= 2
-            }
-            while (halfWidth / inSampleSize >= dstWidth && halfHeight / inSampleSize >= dstHeight)
-        }
-
-        return inSampleSize
-
-    }
-
 }

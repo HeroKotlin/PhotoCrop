@@ -5,7 +5,6 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -18,8 +17,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.view.animation.DecelerateInterpolator
 import com.github.herokotlin.photocrop.model.CropFile
 import com.github.herokotlin.photocrop.util.Compressor
-import java.io.File
-import java.io.FileOutputStream
 
 class PhotoCrop: FrameLayout {
 
