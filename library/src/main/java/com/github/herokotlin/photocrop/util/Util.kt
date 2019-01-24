@@ -1,12 +1,18 @@
 package com.github.herokotlin.photocrop.util
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.view.View
 import android.widget.FrameLayout
+import com.github.herokotlin.photocrop.model.CropFile
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
 internal object Util {
+
+    private var index = 0
 
     fun updateView(view: View, x: Float, y: Float, width: Int, height: Int) {
         updateOrigin(view, x, y)
@@ -37,13 +43,53 @@ internal object Util {
         // 时间格式的文件名
         val formater = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US)
 
-        val filename = "${formater.format(Date())}$extname"
+        // 避免相同时间执行多次
+        index += 1
+
+        val filename = "${formater.format(Date())}_$index$extname"
 
         if (dirname.endsWith("/")) {
             return dirname + filename
         }
 
         return "$dirname/$filename"
+
+    }
+
+    fun createNewImage(bitmap: Bitmap, width: Int, height: Int): Bitmap {
+
+        return Bitmap.createScaledBitmap(bitmap, width, height, true)
+
+    }
+
+    fun createNewFile(context: Context, bitmap: Bitmap, quality: Float): CropFile {
+
+        val path = Util.getFilePath(context.externalCacheDir.absolutePath, ".jpg")
+
+        val output = FileOutputStream(path)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, (quality * 100).toInt(), output)
+        output.close()
+
+        val file = File(path)
+
+        return CropFile(path, file.length(), bitmap.width, bitmap.height)
+
+    }
+
+    fun getInSampleSize(srcWidth: Int, srcHeight: Int, dstWidth: Int, dstHeight: Int): Int {
+
+        var inSampleSize = 1
+
+        if (srcWidth > dstWidth || srcHeight > dstHeight) {
+            val halfWidth = srcWidth / 2
+            val halfHeight = srcHeight / 2
+            do {
+                inSampleSize *= 2
+            }
+            while (halfWidth / inSampleSize >= dstWidth && halfHeight / inSampleSize >= dstHeight)
+        }
+
+        return inSampleSize
 
     }
 
