@@ -174,18 +174,12 @@ class PhotoCrop: FrameLayout {
         photoView.onScaleChange = {
             if (finderView.alpha > 0) {
                 updateFinderMinSize()
-                if (activeAnimator == null) {
-                    finderView.addInteractionTimer()
-                }
             }
             if (foregroundView.alpha > 0) {
                 foregroundView.updateImageSize()
             }
         }
         photoView.onOriginChange = {
-            if (finderView.alpha > 0 && activeAnimator == null) {
-                finderView.addInteractionTimer()
-            }
             if (foregroundView.alpha > 0) {
                 foregroundView.updateImageOrigin()
             }
@@ -199,6 +193,13 @@ class PhotoCrop: FrameLayout {
         photoView.calculateMaxScale = { 1f }
 
         foregroundView.photoView = photoView
+
+        photoView.setOnTouchListener { _, _ ->
+            if (isCropping && activeAnimator == null) {
+                finderView.addInteractionTimer()
+            }
+            false
+        }
 
     }
 

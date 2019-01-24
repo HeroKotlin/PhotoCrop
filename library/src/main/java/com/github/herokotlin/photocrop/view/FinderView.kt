@@ -136,7 +136,9 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
             MotionEvent.ACTION_DOWN -> {
 
-                if (resizeCropAreaTimer != null) {
+                if (resizeCropAreaTimer != null
+                    || (view != topLeftButton && view != topRightButton && view != bottomLeftButton && view != bottomRightButton)
+                ) {
                     return false
                 }
 
