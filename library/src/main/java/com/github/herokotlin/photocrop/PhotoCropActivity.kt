@@ -49,10 +49,16 @@ class PhotoCropActivity: AppCompatActivity() {
 
         loadImage(this, url) { image ->
             if (image != null) {
+
                 photoCrop.image = image
+
+                resetButton.visibility = View.VISIBLE
+                cropButton.visibility = View.VISIBLE
+
                 photoCrop.postDelayed({
                     photoCrop.isCropping = true
                 }, 500)
+
             }
         }
 
