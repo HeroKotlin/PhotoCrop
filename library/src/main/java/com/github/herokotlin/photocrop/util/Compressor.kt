@@ -37,26 +37,26 @@ class Compressor {
         var width = source.width
         var height = source.height
 
-        val ratio = if (height > 0) width / height else 1
+        val ratio = if (height > 0) width.toFloat() / height else 1f
 
         if (width > maxWidth && height > maxHeight) {
             // 看短边
             if (width / maxWidth > height / maxHeight) {
                 height = maxHeight
-                width = height * ratio
+                width = (height * ratio).toInt()
             }
             else {
                 width = maxWidth
-                height = width / ratio
+                height = (width / ratio).toInt()
             }
         }
         else if (width > maxWidth && height <= maxHeight) {
             width = maxWidth
-            height = width / ratio
+            height = (width / ratio).toInt()
         }
         else if (width <= maxWidth && height > maxHeight) {
             height = maxHeight
-            width = height * ratio
+            width = (height * ratio).toInt()
         }
 
         return compress(context, source, width, height)
