@@ -35,7 +35,7 @@
             android:text="重置"/>
 
     <Button
-            android:id="@+id/cropButton"
+            android:id="@+id/submitButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"

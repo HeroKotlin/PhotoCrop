@@ -52,11 +52,10 @@ class PhotoCropActivity: AppCompatActivity() {
 
                 photoCrop.image = image
 
-                resetButton.visibility = View.VISIBLE
-                cropButton.visibility = View.VISIBLE
-
                 photoCrop.postDelayed({
                     photoCrop.isCropping = true
+                    resetButton.visibility = View.VISIBLE
+                    submitButton.visibility = View.VISIBLE
                 }, 500)
 
             }
@@ -70,7 +69,7 @@ class PhotoCropActivity: AppCompatActivity() {
             photoCrop.reset()
         }
 
-        cropButton.setOnClickListener {
+        submitButton.setOnClickListener {
             val bitmap = photoCrop.crop()
             if (bitmap != null) {
                 val file = photoCrop.save(bitmap)
