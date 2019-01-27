@@ -2,7 +2,10 @@
           package="com.github.herokotlin.photocrop">
 
     <application>
-        <activity android:name=".PhotoCropActivity">
+        <activity
+                android:name=".PhotoCropActivity"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                android:screenOrientation="portrait">
         </activity>
     </application>
 

@@ -39,8 +39,6 @@ class PhotoCropActivity: AppCompatActivity() {
 
         window.decorView.systemUiVisibility = flags
 
-        supportActionBar?.hide()
-
         setContentView(R.layout.photo_crop_activity)
 
         val url = intent.getStringExtra(KEY_URL)
