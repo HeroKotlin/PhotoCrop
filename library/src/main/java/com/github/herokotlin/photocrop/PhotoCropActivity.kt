@@ -55,16 +55,16 @@ class PhotoCropActivity: AppCompatActivity() {
 
                 var width = image.width
                 var height = image.height
-                val ratio = width / height
+                val ratio = width.toFloat() / height
 
                 // 压缩图片
                 if (width > maxSize) {
                     width = maxSize
-                    height = width / ratio
+                    height = (width / ratio).toInt()
                 }
                 if (height > maxSize) {
                     height = maxSize
-                    width = height * ratio
+                    width = (height * ratio).toInt()
                 }
 
                 if (width != image.width || height != image.height) {
