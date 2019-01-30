@@ -43,9 +43,9 @@ class Compressor {
             return source
         }
 
-        val temp = Util.createNewFile(context, bitmap, quality)
-        if (temp.size < maxSize) {
-            return temp
+        val lowQuality = Util.createNewFile(context, bitmap, quality)
+        if (lowQuality.size < maxSize) {
+            return lowQuality
         }
 
         var width = source.width
@@ -73,7 +73,11 @@ class Compressor {
             width = (height * ratio).toInt()
         }
 
-        return compress(context, bitmap, source, width, height)
+        if (width != source.width || height != source.height) {
+            return compress(context, bitmap, source, width, height)
+        }
+
+        return lowQuality
 
     }
 
