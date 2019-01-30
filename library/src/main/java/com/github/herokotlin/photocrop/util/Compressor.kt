@@ -34,6 +34,20 @@ class Compressor {
             return source
         }
 
+        val bitmap: Bitmap
+        try {
+            bitmap = BitmapFactory.decodeFile(source.path)
+        }
+        catch (ex: Exception) {
+            ex.printStackTrace()
+            return source
+        }
+
+        val temp = Util.createNewFile(context, bitmap, quality)
+        if (temp.size < maxSize) {
+            return temp
+        }
+
         var width = source.width
         var height = source.height
 
@@ -59,7 +73,7 @@ class Compressor {
             width = (height * ratio).toInt()
         }
 
-        return compress(context, source, width, height)
+        return compress(context, bitmap, source, width, height)
 
     }
 
@@ -77,6 +91,12 @@ class Compressor {
             ex.printStackTrace()
             return source
         }
+
+        return compress(context, bitmap, source, width, height)
+
+    }
+
+    private fun compress(context: Context, bitmap: Bitmap, source: CropFile, width: Int, height: Int): CropFile {
 
         val scaledBitmap = Util.createNewImage(bitmap, width, height)
 

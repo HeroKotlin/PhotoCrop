@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.github.herokotlin.photocrop.util.Util
 import kotlinx.android.synthetic.main.photo_crop_activity.*
 
 class PhotoCropActivity: AppCompatActivity() {
@@ -49,30 +48,7 @@ class PhotoCropActivity: AppCompatActivity() {
         loadImage(this, url) { image ->
             if (image != null) {
 
-                // 为了避免内存爆炸，加个最大尺寸限制
-                // 毕竟裁剪也不需要非常大的图，通常就是个头像封面啥的，限制到 3000 足够用了
-                val maxSize = 3000
-
-                var width = image.width
-                var height = image.height
-                val ratio = width.toFloat() / height
-
-                // 压缩图片
-                if (width > maxSize) {
-                    width = maxSize
-                    height = (width / ratio).toInt()
-                }
-                if (height > maxSize) {
-                    height = maxSize
-                    width = (height * ratio).toInt()
-                }
-
-                if (width != image.width || height != image.height) {
-                    photoCrop.image = Util.createNewImage(image, width, height)
-                }
-                else {
-                    photoCrop.image = image
-                }
+                photoCrop.image = image
 
                 photoCrop.postDelayed({
                     photoCrop.isCropping = true

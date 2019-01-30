@@ -28,10 +28,38 @@ class PhotoCrop: FrameLayout {
                 return
             }
 
-            field = value
+            var newImage = value
 
-            photoView.setImageBitmap(value)
-            foregroundView.imageView.setImageBitmap(value)
+            value?.let {
+
+                // 为了避免内存爆炸，加个最大尺寸限制
+                // 毕竟裁剪也不需要非常大的图，通常就是个头像封面啥的，限制到 3000 足够用了
+                val maxSize = 3000
+
+                var width = it.width
+                var height = it.height
+                val ratio = width.toFloat() / height
+
+                // 压缩图片
+                if (width > maxSize) {
+                    width = maxSize
+                    height = (width / ratio).toInt()
+                }
+                if (height > maxSize) {
+                    height = maxSize
+                    width = (height * ratio).toInt()
+                }
+
+                if (width != it.width || height != it.height) {
+                    newImage = Util.createNewImage(it, width, height)
+                }
+
+            }
+
+            field = newImage
+
+            photoView.setImageBitmap(newImage)
+            foregroundView.imageView.setImageBitmap(newImage)
 
         }
 
@@ -205,7 +233,6 @@ class PhotoCrop: FrameLayout {
                 foregroundView.updateImageOrigin()
             }
         }
-        photoView.calculateMaxScale = { 1f }
 
         foregroundView.photoView = photoView
 
