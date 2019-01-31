@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.photo_crop_activity.*
@@ -68,12 +70,19 @@ class PhotoCropActivity: AppCompatActivity() {
         }
 
         submitButton.setOnClickListener {
+
             val bitmap = photoCrop.crop()
             if (bitmap != null) {
-                val file = photoCrop.save(bitmap)
-                val result = photoCrop.compress(file)
-                callback.onSubmit(this, result)
+                val handler = Handler(Looper.getMainLooper())
+                Thread {
+                    val file = photoCrop.save(bitmap)
+                    val result = photoCrop.compress(file)
+                    handler.post {
+                        callback.onSubmit(this, result)
+                    }
+                }.start()
             }
+
         }
 
     }
