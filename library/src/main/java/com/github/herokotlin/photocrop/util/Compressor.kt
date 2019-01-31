@@ -1,6 +1,5 @@
 package com.github.herokotlin.photocrop.util
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.github.herokotlin.photocrop.model.CropFile
@@ -28,7 +27,7 @@ class Compressor {
         this.quality = quality
     }
 
-    fun compress(context: Context, source: CropFile): CropFile {
+    fun compress(imageDir: String, source: CropFile): CropFile {
 
         if (source.size < maxSize) {
             return source
@@ -43,7 +42,7 @@ class Compressor {
             return source
         }
 
-        val lowQuality = Util.createNewFile(context, bitmap, quality)
+        val lowQuality = Util.createNewFile(imageDir, bitmap, quality)
         if (lowQuality.size < maxSize) {
             return lowQuality
         }
@@ -74,14 +73,14 @@ class Compressor {
         }
 
         if (width != source.width || height != source.height) {
-            return compress(context, bitmap, source, width, height)
+            return compress(imageDir, bitmap, width, height)
         }
 
         return lowQuality
 
     }
 
-    fun compress(context: Context, source: CropFile, width: Int, height: Int): CropFile {
+    fun compress(imageDir: String, source: CropFile, width: Int, height: Int): CropFile {
 
         if (source.width == width && source.height == height && source.size < maxSize) {
             return source
@@ -96,20 +95,20 @@ class Compressor {
             return source
         }
 
-        return compress(context, bitmap, source, width, height)
+        return compress(imageDir, bitmap, width, height)
 
     }
 
-    private fun compress(context: Context, bitmap: Bitmap, source: CropFile, width: Int, height: Int): CropFile {
+    private fun compress(imageDir: String, bitmap: Bitmap, width: Int, height: Int): CropFile {
 
         val scaledBitmap = Util.createNewImage(bitmap, width, height)
 
-        val file = Util.createNewFile(context, scaledBitmap, 1f)
+        val file = Util.createNewFile(imageDir, scaledBitmap, 1f)
         if (file.size < maxSize) {
             return file
         }
 
-        return Util.createNewFile(context, scaledBitmap, quality)
+        return Util.createNewFile(imageDir, scaledBitmap, quality)
 
     }
 

@@ -62,9 +62,9 @@ internal object Util {
 
     }
 
-    fun createNewFile(context: Context, bitmap: Bitmap, quality: Float): CropFile {
+    fun createNewFile(imageDir: String, bitmap: Bitmap, quality: Float): CropFile {
 
-        val path = Util.getFilePath(context.externalCacheDir.absolutePath, ".jpg")
+        val path = Util.getFilePath(imageDir, ".jpg")
 
         val output = FileOutputStream(path)
         bitmap.compress(Bitmap.CompressFormat.JPEG, (quality * 100).toInt(), output)

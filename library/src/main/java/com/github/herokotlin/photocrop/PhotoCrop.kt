@@ -307,14 +307,19 @@ class PhotoCrop: FrameLayout {
 
     fun save(bitmap: Bitmap): CropFile {
 
-        return Util.createNewFile(context, bitmap, 1f)
+        return Util.createNewFile(context.externalCacheDir.absolutePath, bitmap, 1f)
 
     }
 
     fun compress(source: CropFile): CropFile {
 
         return Compressor(configuration.maxSize, configuration.quality)
-            .compress(context, source, configuration.cropWidth.toInt(), configuration.cropHeight.toInt())
+            .compress(
+                context.externalCacheDir.absolutePath,
+                source,
+                configuration.cropWidth.toInt(),
+                configuration.cropHeight.toInt()
+            )
 
     }
 
