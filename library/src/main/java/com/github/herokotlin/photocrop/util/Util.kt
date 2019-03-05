@@ -1,6 +1,5 @@
 package com.github.herokotlin.photocrop.util
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.FrameLayout
@@ -32,7 +31,7 @@ internal object Util {
         return view.alpha > 0
     }
 
-    fun getFilePath(dirname: String, extname: String): String {
+    private fun getFilePath(dirname: String, extname: String): String {
 
         // 确保目录存在
         val file = File(dirname)

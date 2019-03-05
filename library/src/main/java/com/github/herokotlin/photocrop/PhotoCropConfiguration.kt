@@ -1,8 +1,5 @@
 package com.github.herokotlin.photocrop
 
-import android.content.Context
-import android.graphics.Bitmap
-
 abstract class PhotoCropConfiguration {
 
     /**
