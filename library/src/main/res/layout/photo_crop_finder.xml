@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -108,4 +108,4 @@
         android:layout_width="@dimen/photo_crop_finder_corner_button_size"
         android:layout_height="@dimen/photo_crop_finder_corner_button_size"/>
 
-</FrameLayout>
+</merge>
