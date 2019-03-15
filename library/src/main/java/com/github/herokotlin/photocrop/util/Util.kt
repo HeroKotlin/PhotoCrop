@@ -1,6 +1,8 @@
 package com.github.herokotlin.photocrop.util
 
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.graphics.drawable.BitmapDrawable
 import android.view.View
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.model.CropFile
@@ -52,6 +54,15 @@ internal object Util {
         }
 
         return "$dirname/$filename"
+
+    }
+
+    fun rotateImage(bitmap: Bitmap, degrees: Float): Bitmap {
+
+        val matrix = Matrix()
+        matrix.setRotate(degrees)
+
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, false)
 
     }
 

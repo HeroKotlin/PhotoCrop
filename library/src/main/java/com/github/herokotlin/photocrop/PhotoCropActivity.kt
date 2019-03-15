@@ -56,6 +56,7 @@ class PhotoCropActivity: AppCompatActivity() {
                     photoCrop.isCropping = true
                     resetButton.visibility = View.VISIBLE
                     submitButton.visibility = View.VISIBLE
+                    rotateButton.visibility = View.VISIBLE
                 }, 500)
 
             }
@@ -67,6 +68,18 @@ class PhotoCropActivity: AppCompatActivity() {
 
         resetButton.setOnClickListener {
             photoCrop.reset()
+        }
+
+        rotateButton.setOnClickListener {
+            photoCrop.rotate()
+        }
+
+        photoCrop.onInteractionStart = {
+            rotateButton.visibility = View.GONE
+        }
+
+        photoCrop.onInteractionEnd = {
+            rotateButton.visibility = View.VISIBLE
         }
 
         submitButton.setOnClickListener {

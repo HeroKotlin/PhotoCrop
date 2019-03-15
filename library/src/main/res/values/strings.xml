@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="photo_crop_activity_cancel">取消</string>
+    <string name="photo_crop_activity_reset">重置</string>
+    <string name="photo_crop_activity_submit">确定</string>
+</resources>

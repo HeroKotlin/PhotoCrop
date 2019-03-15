@@ -13,7 +13,6 @@ import com.github.herokotlin.photocrop.util.Util
 import com.github.herokotlin.photoview.PhotoView
 import kotlinx.android.synthetic.main.photo_crop.view.*
 import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
-import android.graphics.drawable.BitmapDrawable
 import android.view.animation.DecelerateInterpolator
 import com.github.herokotlin.photocrop.model.CropFile
 import com.github.herokotlin.photocrop.util.Compressor
@@ -28,38 +27,10 @@ class PhotoCrop: FrameLayout {
                 return
             }
 
-            var newImage = value
+            field = value
 
-            value?.let {
-
-                // 为了避免内存爆炸，加个最大尺寸限制
-                // 毕竟裁剪也不需要非常大的图，通常就是个头像封面啥的，限制到 3000 足够用了
-                val maxSize = 3000
-
-                var width = it.width
-                var height = it.height
-                val ratio = width.toFloat() / height
-
-                // 压缩图片
-                if (width > maxSize) {
-                    width = maxSize
-                    height = (width / ratio).toInt()
-                }
-                if (height > maxSize) {
-                    height = maxSize
-                    width = (height * ratio).toInt()
-                }
-
-                if (width != it.width || height != it.height) {
-                    newImage = Util.createNewImage(it, width, height)
-                }
-
-            }
-
-            field = newImage
-
-            photoView.setImageBitmap(newImage)
-            foregroundView.imageView.setImageBitmap(newImage)
+            photoView.setImageBitmap(value)
+            foregroundView.imageView.setImageBitmap(value)
 
         }
 
@@ -143,7 +114,6 @@ class PhotoCrop: FrameLayout {
                     overlayView.alpha = 1 - it
                     finderView.alpha = 1 - it
 
-
                     finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
 
                 }
@@ -155,11 +125,16 @@ class PhotoCrop: FrameLayout {
 
             }
 
-            photoView.contentInset = toContentInset
+            photoView.keep {
+                photoView.contentInset = toContentInset
+            }
 
-            photoView.temp({ baseMatrix, changeMatrix ->
-                photoView.resetMatrix(baseMatrix, changeMatrix)
-            }, reader)
+            photoView.temp(
+                { baseMatrix, changeMatrix ->
+                    photoView.resetMatrix(baseMatrix, changeMatrix)
+                },
+                reader
+            )
 
             finderView.cropArea = fromCropArea
 
@@ -176,6 +151,9 @@ class PhotoCrop: FrameLayout {
             photoView.startZoomAnimation(fromScale, toScale)
 
         }
+
+    var onInteractionStart: (() -> Unit)? = null
+    var onInteractionEnd: (() -> Unit)? = null
 
     private var activeAnimator: ValueAnimator? = null
 
@@ -208,9 +186,11 @@ class PhotoCrop: FrameLayout {
         }
         finderView.onInteractionStart = {
             updateInteractionState(configuration.overlayAlphaInteractive, 1f)
+            onInteractionStart?.invoke()
         }
         finderView.onInteractionEnd = {
             updateInteractionState(configuration.overlayAlphaNormal, 0f)
+            onInteractionEnd?.invoke()
         }
 
         photoView.scaleType = PhotoView.ScaleType.FIT
@@ -273,35 +253,41 @@ class PhotoCrop: FrameLayout {
 
     }
 
+    fun rotate() {
+
+        image?.let {
+            image = Util.rotateImage(it, -90f)
+        }
+
+    }
+
     fun crop(): Bitmap? {
 
         if (!isCropping) {
             return null
         }
 
-        val drawable = photoView.drawable
-        if (drawable !is BitmapDrawable) {
-            return null
+        return image?.let {
+
+            foregroundView.save()
+
+            val source = it
+            val sourceWidth = source.width
+            val sourceHeight = source.height
+
+            val x = Math.abs(foregroundView.relativeX) * sourceWidth
+            val y = Math.abs(foregroundView.relativeY) * sourceHeight
+            val width = foregroundView.relativeWidth * sourceWidth
+            val height = foregroundView.relativeHeight * sourceHeight
+
+            Bitmap.createBitmap(
+                source,
+                (Math.floor(x.toDouble())).toInt(),
+                (Math.floor(y.toDouble())).toInt(),
+                (Math.round(width.toDouble())).toInt(),
+                (Math.round(height.toDouble())).toInt()
+            )
         }
-
-        foregroundView.save()
-
-        val source = drawable.bitmap
-        val sourceWidth = source.width
-        val sourceHeight = source.height
-
-        val x = Math.abs(foregroundView.relativeX) * sourceWidth
-        val y = Math.abs(foregroundView.relativeY) * sourceHeight
-        val width = foregroundView.relativeWidth * sourceWidth
-        val height = foregroundView.relativeHeight * sourceHeight
-
-        return Bitmap.createBitmap(
-            source,
-            (Math.floor(x.toDouble())).toInt(),
-            (Math.floor(y.toDouble())).toInt(),
-            (Math.round(width.toDouble())).toInt(),
-            (Math.round(height.toDouble())).toInt()
-        )
 
     }
 
@@ -325,7 +311,7 @@ class PhotoCrop: FrameLayout {
 
     private fun startAnimation(duration: Long, interpolator: TimeInterpolator, update: (Float) -> Unit, complete: (() -> Unit)? = null) {
 
-        this.activeAnimator?.cancel()
+        activeAnimator?.cancel()
 
         val animator = ValueAnimator.ofFloat(0f, 1f)
 
@@ -345,7 +331,7 @@ class PhotoCrop: FrameLayout {
         })
         animator.start()
 
-        this.activeAnimator = animator
+        activeAnimator = animator
 
     }
 
