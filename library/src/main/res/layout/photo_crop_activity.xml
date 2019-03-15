@@ -11,65 +11,65 @@
     <View
             android:id="@+id/separatorView"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/photo_crop_activity_separator_line_width"
-            android:background="@color/photo_crop_activity_separator_line_color"
+            android:layout_height="@dimen/photo_crop_separator_line_width"
+            android:background="@color/photo_crop_separator_line_color"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="@dimen/photo_crop_activity_separator_line_margin_bottom"/>
+            android:layout_marginBottom="@dimen/photo_crop_separator_line_margin_bottom"/>
 
     <ImageButton
             android:id="@+id/rotateButton"
-            android:layout_width="@dimen/photo_crop_activity_button_width"
-            android:layout_height="@dimen/photo_crop_activity_button_height"
+            android:layout_width="@dimen/photo_crop_button_width"
+            android:layout_height="@dimen/photo_crop_button_height"
             android:layout_alignParentLeft="true"
             android:layout_above="@id/separatorView"
-            android:layout_marginLeft="@dimen/photo_crop_activity_rotate_button_margin_left"
-            android:layout_marginBottom="@dimen/photo_crop_activity_separator_line_spacing_top"
+            android:layout_marginLeft="@dimen/photo_crop_rotate_button_margin_left"
+            android:layout_marginBottom="@dimen/photo_crop_separator_line_spacing_top"
             android:padding="0dp"
             android:background="@android:color/transparent"
             android:src="@drawable/photo_crop_rotate"/>
 
     <Button
             android:id="@+id/cancelButton"
-            android:layout_width="@dimen/photo_crop_activity_button_width"
-            android:layout_height="@dimen/photo_crop_activity_button_height"
+            android:layout_width="@dimen/photo_crop_button_width"
+            android:layout_height="@dimen/photo_crop_button_height"
             android:layout_alignParentLeft="true"
             android:layout_alignTop="@id/separatorView"
-            android:layout_marginLeft="@dimen/photo_crop_activity_cancel_button_margin_left"
-            android:layout_marginTop="@dimen/photo_crop_activity_separator_line_spacing_bottom"
+            android:layout_marginLeft="@dimen/photo_crop_cancel_button_margin_left"
+            android:layout_marginTop="@dimen/photo_crop_separator_line_spacing_bottom"
             android:padding="0dp"
             android:background="@android:color/transparent"
-            android:textColor="@color/photo_crop_activity_button_text_color"
-            android:textSize="@dimen/photo_crop_activity_button_text_size"
-            android:text="@string/photo_crop_activity_cancel"/>
+            android:textColor="@color/photo_crop_button_text_color"
+            android:textSize="@dimen/photo_crop_button_text_size"
+            android:text="@string/photo_crop_cancel_button_title"/>
 
     <Button
             android:id="@+id/resetButton"
-            android:layout_width="@dimen/photo_crop_activity_button_width"
-            android:layout_height="@dimen/photo_crop_activity_button_height"
+            android:layout_width="@dimen/photo_crop_button_width"
+            android:layout_height="@dimen/photo_crop_button_height"
             android:layout_centerHorizontal="true"
             android:layout_alignTop="@id/separatorView"
-            android:layout_marginTop="@dimen/photo_crop_activity_separator_line_spacing_bottom"
+            android:layout_marginTop="@dimen/photo_crop_separator_line_spacing_bottom"
             android:padding="0dp"
             android:visibility="gone"
             android:background="@android:color/transparent"
-            android:textColor="@color/photo_crop_activity_button_text_color"
-            android:textSize="@dimen/photo_crop_activity_button_text_size"
-            android:text="@string/photo_crop_activity_reset"/>
+            android:textColor="@color/photo_crop_button_text_color"
+            android:textSize="@dimen/photo_crop_button_text_size"
+            android:text="@string/photo_crop_reset_button_title"/>
 
     <Button
             android:id="@+id/submitButton"
-            android:layout_width="@dimen/photo_crop_activity_button_width"
-            android:layout_height="@dimen/photo_crop_activity_button_height"
+            android:layout_width="@dimen/photo_crop_button_width"
+            android:layout_height="@dimen/photo_crop_button_height"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/separatorView"
-            android:layout_marginRight="@dimen/photo_crop_activity_submit_button_margin_right"
-            android:layout_marginTop="@dimen/photo_crop_activity_separator_line_spacing_bottom"
+            android:layout_marginRight="@dimen/photo_crop_submit_button_margin_right"
+            android:layout_marginTop="@dimen/photo_crop_separator_line_spacing_bottom"
             android:padding="0dp"
             android:visibility="gone"
             android:background="@android:color/transparent"
-            android:textColor="@color/photo_crop_activity_button_text_color"
-            android:textSize="@dimen/photo_crop_activity_button_text_size"
-            android:text="@string/photo_crop_activity_submit"/>
+            android:textColor="@color/photo_crop_button_text_color"
+            android:textSize="@dimen/photo_crop_button_text_size"
+            android:text="@string/photo_crop_submit_button_title"/>
 
 </RelativeLayout>

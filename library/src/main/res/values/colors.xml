@@ -7,7 +7,7 @@
     <color name="photo_crop_grid_line_color">#88FFFFFF</color>
     <color name="photo_crop_overlay_color">#CC000000</color>
 
-    <color name="photo_crop_activity_separator_line_color">#33FFFFFF</color>
-    <color name="photo_crop_activity_button_text_color">#FFF</color>
+    <color name="photo_crop_separator_line_color">#33FFFFFF</color>
+    <color name="photo_crop_button_text_color">#FFF</color>
 
 </resources>
