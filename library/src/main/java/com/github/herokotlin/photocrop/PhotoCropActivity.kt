@@ -98,6 +98,16 @@ class PhotoCropActivity: AppCompatActivity() {
 
         }
 
+        if (configuration.cancelButtonTitle.isNotEmpty()) {
+            cancelButton.text = configuration.cancelButtonTitle
+        }
+        if (configuration.resetButtonTitle.isNotEmpty()) {
+            resetButton.text = configuration.resetButtonTitle
+        }
+        if (configuration.submitButtonTitle.isNotEmpty()) {
+            submitButton.text = configuration.submitButtonTitle
+        }
+
     }
 
 }

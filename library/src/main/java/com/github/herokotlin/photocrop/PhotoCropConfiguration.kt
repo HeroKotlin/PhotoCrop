@@ -52,4 +52,11 @@ abstract class PhotoCropConfiguration {
      */
     var overlayAlphaInteractive = 0.2f
 
+    /**
+     * 提供动态修改标题文字的方式
+     */
+    var cancelButtonTitle = ""
+    var resetButtonTitle = ""
+    var submitButtonTitle = ""
+
 }
