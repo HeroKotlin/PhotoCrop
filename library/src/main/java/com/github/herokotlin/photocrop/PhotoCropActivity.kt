@@ -71,7 +71,7 @@ class PhotoCropActivity: AppCompatActivity() {
         }
 
         rotateButton.setOnClickListener {
-            photoCrop.rotate()
+            photoCrop.rotate(-90f)
         }
 
         photoCrop.onInteractionStart = {

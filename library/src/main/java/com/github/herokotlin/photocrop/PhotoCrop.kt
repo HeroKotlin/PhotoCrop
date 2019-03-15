@@ -253,10 +253,10 @@ class PhotoCrop: FrameLayout {
 
     }
 
-    fun rotate() {
+    fun rotate(degrees: Float) {
 
         image?.let {
-            image = Util.rotateImage(it, -90f)
+            image = Util.rotateImage(it, degrees)
         }
 
     }
