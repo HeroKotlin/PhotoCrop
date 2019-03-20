@@ -2,7 +2,6 @@ package com.github.herokotlin.photocrop.util
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.graphics.drawable.BitmapDrawable
 import android.view.View
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.model.CropFile
