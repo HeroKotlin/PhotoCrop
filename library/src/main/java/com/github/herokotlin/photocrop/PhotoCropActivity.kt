@@ -46,19 +46,34 @@ class PhotoCropActivity: AppCompatActivity() {
         val url = intent.getStringExtra(KEY_URL)
 
         photoCrop.init(configuration)
+        photoCrop.permission.onPermissionsGranted = {
+            callback.onPermissionsGranted(this)
+        }
+        photoCrop.permission.onPermissionsDenied = {
+            callback.onPermissionsDenied(this)
+        }
+        photoCrop.permission.onPermissionsNotGranted = {
+            callback.onPermissionsNotGranted(this)
+        }
+        photoCrop.permission.onExternalStorageNotWritable = {
+            callback.onExternalStorageNotWritable(this)
+        }
+        if (photoCrop.permission.checkExternalStorageWritable()) {
+            photoCrop.permission.requestPermissions(this) {
+                loadImage(this, url) { image ->
+                    if (image != null) {
 
-        loadImage(this, url) { image ->
-            if (image != null) {
+                        photoCrop.image = image
 
-                photoCrop.image = image
+                        photoCrop.postDelayed({
+                            photoCrop.isCropping = true
+                            resetButton.visibility = View.VISIBLE
+                            submitButton.visibility = View.VISIBLE
+                            rotateButton.visibility = View.VISIBLE
+                        }, 500)
 
-                photoCrop.postDelayed({
-                    photoCrop.isCropping = true
-                    resetButton.visibility = View.VISIBLE
-                    submitButton.visibility = View.VISIBLE
-                    rotateButton.visibility = View.VISIBLE
-                }, 500)
-
+                    }
+                }
             }
         }
 
@@ -88,10 +103,12 @@ class PhotoCropActivity: AppCompatActivity() {
             if (bitmap != null) {
                 val handler = Handler(Looper.getMainLooper())
                 Thread {
-                    val file = photoCrop.save(bitmap)
-                    val result = photoCrop.compress(file)
-                    handler.post {
-                        callback.onSubmit(this, result)
+                    photoCrop.save(bitmap)?.let {
+                        photoCrop.compress(it)?.let {
+                            handler.post {
+                                callback.onSubmit(this, it)
+                            }
+                        }
                     }
                 }.start()
             }
@@ -108,6 +125,11 @@ class PhotoCropActivity: AppCompatActivity() {
             submitButton.text = configuration.submitButtonTitle
         }
 
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        photoCrop.permission.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 }

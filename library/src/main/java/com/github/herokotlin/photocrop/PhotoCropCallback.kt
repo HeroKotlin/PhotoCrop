@@ -9,4 +9,20 @@ interface PhotoCropCallback {
 
     fun onSubmit(activity: Activity, cropFile: CropFile)
 
+    fun onPermissionsGranted(activity: Activity) {
+
+    }
+
+    fun onPermissionsDenied(activity: Activity) {
+
+    }
+
+    fun onPermissionsNotGranted(activity: Activity) {
+
+    }
+
+    fun onExternalStorageNotWritable(activity: Activity) {
+
+    }
+
 }
