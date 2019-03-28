@@ -153,7 +153,7 @@ class PhotoCrop: FrameLayout {
 
         }
 
-    var permission = Permission(89190901, listOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
+    var permission = Permission(190901, listOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
 
     var onInteractionStart: (() -> Unit)? = null
     var onInteractionEnd: (() -> Unit)? = null
