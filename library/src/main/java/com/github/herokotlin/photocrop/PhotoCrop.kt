@@ -20,6 +20,10 @@ import com.github.herokotlin.photocrop.util.Compressor
 
 class PhotoCrop: FrameLayout {
 
+    companion object {
+        val permission = Permission(19901, listOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
+    }
+
     var image: Bitmap? = null
 
         set(value) {
@@ -152,8 +156,6 @@ class PhotoCrop: FrameLayout {
             photoView.startZoomAnimation(fromScale, toScale)
 
         }
-
-    var permission = Permission(19901, listOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
 
     var onInteractionStart: (() -> Unit)? = null
     var onInteractionEnd: (() -> Unit)? = null

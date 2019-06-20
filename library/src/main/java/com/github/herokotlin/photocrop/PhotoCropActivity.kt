@@ -46,36 +46,6 @@ class PhotoCropActivity: AppCompatActivity() {
         val url = intent.getStringExtra(KEY_URL)
 
         photoCrop.init(configuration)
-        photoCrop.permission.onPermissionsGranted = {
-            callback.onPermissionsGranted(this)
-        }
-        photoCrop.permission.onPermissionsDenied = {
-            callback.onPermissionsDenied(this)
-        }
-        photoCrop.permission.onPermissionsNotGranted = {
-            callback.onPermissionsNotGranted(this)
-        }
-        photoCrop.permission.onExternalStorageNotWritable = {
-            callback.onExternalStorageNotWritable(this)
-        }
-        if (photoCrop.permission.checkExternalStorageWritable()) {
-            photoCrop.permission.requestPermissions(this) {
-                loadImage(this, url) { image ->
-                    if (image != null) {
-
-                        photoCrop.image = image
-
-                        photoCrop.postDelayed({
-                            photoCrop.isCropping = true
-                            resetButton.visibility = View.VISIBLE
-                            submitButton.visibility = View.VISIBLE
-                            rotateButton.visibility = View.VISIBLE
-                        }, 500)
-
-                    }
-                }
-            }
-        }
 
         cancelButton.setOnClickListener {
             callback.onCancel(this)
@@ -125,11 +95,22 @@ class PhotoCropActivity: AppCompatActivity() {
             submitButton.text = configuration.submitButtonTitle
         }
 
-    }
+        // 外面请求完权限再进来
+        loadImage(this, url) { image ->
+            if (image != null) {
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        photoCrop.permission.onRequestPermissionsResult(requestCode, permissions, grantResults)
+                photoCrop.image = image
+
+                photoCrop.postDelayed({
+                    photoCrop.isCropping = true
+                    resetButton.visibility = View.VISIBLE
+                    submitButton.visibility = View.VISIBLE
+                    rotateButton.visibility = View.VISIBLE
+                }, 500)
+
+            }
+        }
+
     }
 
 }
