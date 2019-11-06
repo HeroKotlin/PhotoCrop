@@ -302,10 +302,7 @@ class PhotoCrop: FrameLayout {
             return null
         }
 
-        val cacheDir = context.externalCacheDir
-        if (cacheDir == null) {
-            return null
-        }
+        val cacheDir = context.externalCacheDir ?: return null
 
         return Util.createNewFile(cacheDir.absolutePath, bitmap, 1f)
 
@@ -317,10 +314,7 @@ class PhotoCrop: FrameLayout {
             return null
         }
 
-        val cacheDir = context.externalCacheDir
-        if (cacheDir == null) {
-            return null
-        }
+        val cacheDir = context.externalCacheDir ?: return null
 
         return Compressor(configuration.maxSize, configuration.quality)
             .compress(

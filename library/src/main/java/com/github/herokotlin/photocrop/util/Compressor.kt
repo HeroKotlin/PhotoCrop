@@ -37,7 +37,7 @@ class Compressor {
         try {
             bitmap = BitmapFactory.decodeFile(source.path)
         }
-        catch (ex: Exception) {
+        catch (ex: Throwable) {
             ex.printStackTrace()
             return source
         }
