@@ -35,7 +35,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${safeExtGet('kotlinVersion', '1.3.40')}"
     implementation "androidx.appcompat:appcompat:${safeExtGet('androidxVersion', '1.1.0')}"
-    implementation 'com.github.herokotlin:PhotoView:0.2.7'
+    implementation 'com.github.herokotlin:PhotoView:0.2.8'
     implementation 'com.github.herokotlin:Permission:0.0.5'
 
     testImplementation 'junit:junit:4.12'
