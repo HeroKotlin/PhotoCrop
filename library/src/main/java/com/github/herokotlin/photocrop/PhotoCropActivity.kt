@@ -99,14 +99,19 @@ class PhotoCropActivity: AppCompatActivity() {
         loadImage(this, url) { image ->
             if (image != null) {
 
-                photoCrop.image = image
+                // 回到主线程
+                photoCrop.post {
 
-                photoCrop.postDelayed({
-                    photoCrop.isCropping = true
-                    resetButton.visibility = View.VISIBLE
-                    submitButton.visibility = View.VISIBLE
-                    rotateButton.visibility = View.VISIBLE
-                }, 500)
+                    photoCrop.image = image
+
+                    photoCrop.postDelayed({
+                        photoCrop.isCropping = true
+                        resetButton.visibility = View.VISIBLE
+                        submitButton.visibility = View.VISIBLE
+                        rotateButton.visibility = View.VISIBLE
+                    }, 500)
+
+                }
 
             }
         }
