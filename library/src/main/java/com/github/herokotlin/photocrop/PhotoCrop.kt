@@ -14,15 +14,10 @@ import com.github.herokotlin.photoview.PhotoView
 import kotlinx.android.synthetic.main.photo_crop.view.*
 import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 import android.view.animation.DecelerateInterpolator
-import com.github.herokotlin.permission.Permission
 import com.github.herokotlin.photocrop.model.CropFile
 import com.github.herokotlin.photocrop.util.Compressor
 
 class PhotoCrop: FrameLayout {
-
-    companion object {
-        val permission = Permission(19901, listOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE))
-    }
 
     var image: Bitmap? = null
 
@@ -298,10 +293,6 @@ class PhotoCrop: FrameLayout {
 
     fun save(bitmap: Bitmap): CropFile? {
 
-        if (!permission.checkExternalStorageWritable()) {
-            return null
-        }
-
         val cacheDir = context.externalCacheDir ?: return null
 
         return Util.createNewFile(cacheDir.absolutePath, bitmap, 1f)
@@ -309,10 +300,6 @@ class PhotoCrop: FrameLayout {
     }
 
     fun compress(source: CropFile): CropFile? {
-
-        if (!permission.checkExternalStorageWritable()) {
-            return null
-        }
 
         val cacheDir = context.externalCacheDir ?: return null
 
