@@ -12,8 +12,6 @@ import java.util.*
 
 internal object Util {
 
-    private var index = 0
-
     fun updateView(view: View, x: Float, y: Float, width: Int, height: Int) {
         updateOrigin(view, x, y)
         updateSize(view, width, height)
@@ -40,19 +38,12 @@ internal object Util {
             file.mkdir()
         }
 
-        // 时间格式的文件名
-        val formater = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US)
-
-        // 避免相同时间执行多次
-        index += 1
-
-        val filename = "${formater.format(Date())}_$index$extname"
-
-        if (dirname.endsWith("/")) {
-            return dirname + filename
+        var dirName = dirname
+        if (!dirName.endsWith("/")) {
+            dirName += "/"
         }
 
-        return "$dirname/$filename"
+        return dirName + UUID.randomUUID().toString() + extname
 
     }
 
@@ -73,10 +64,18 @@ internal object Util {
 
     fun createNewFile(imageDir: String, bitmap: Bitmap, quality: Float): CropFile {
 
-        val path = Util.getFilePath(imageDir, ".jpg")
+        var extname = ".jpg"
+        var format = Bitmap.CompressFormat.JPEG
+
+        if (bitmap.hasAlpha()) {
+            extname = ".png"
+            format = Bitmap.CompressFormat.PNG
+        }
+
+        val path = getFilePath(imageDir, extname)
 
         val output = FileOutputStream(path)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, (quality * 100).toInt(), output)
+        bitmap.compress(format, (quality * 100).toInt(), output)
         output.close()
 
         val file = File(path)
