@@ -3,6 +3,7 @@ package com.github.herokotlin.photocrop
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -85,6 +86,10 @@ class PhotoCropActivity: AppCompatActivity() {
 
         }
 
+        if (configuration.guideLabelTitle.isNotEmpty()) {
+            guideLabel.text = configuration.guideLabelTitle;
+            guideLabel.visibility = View.VISIBLE
+        }
         if (configuration.cancelButtonTitle.isNotEmpty()) {
             cancelButton.text = configuration.cancelButtonTitle
         }

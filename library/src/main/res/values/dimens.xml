@@ -8,6 +8,9 @@
 
     <dimen name="photo_crop_grid_line_width">1px</dimen>
 
+    <dimen name="photo_crop_guide_label_text_size">14dp</dimen>
+    <dimen name="photo_crop_guide_label_margin_top">20dp</dimen>
+
     <dimen name="photo_crop_separator_line_width">1px</dimen>
     <dimen name="photo_crop_separator_line_spacing_top">10dp</dimen>
     <dimen name="photo_crop_separator_line_spacing_bottom">5dp</dimen>

@@ -7,7 +7,18 @@
             android:id="@+id/photoCrop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    
+
+    <TextView
+            android:id="@+id/guideLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/photo_crop_guide_label_margin_top"
+            android:visibility="gone"
+            android:textSize="@dimen/photo_crop_guide_label_text_size"
+            android:textColor="@color/photo_crop_guide_label_text_color"
+            android:text=""/>
+
     <View
             android:id="@+id/separatorView"
             android:layout_width="match_parent"

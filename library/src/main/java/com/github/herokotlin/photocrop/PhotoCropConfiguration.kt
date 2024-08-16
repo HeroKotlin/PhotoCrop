@@ -55,6 +55,7 @@ abstract class PhotoCropConfiguration {
     /**
      * 提供动态修改标题文字的方式
      */
+    var guideLabelTitle = ""
     var cancelButtonTitle = ""
     var resetButtonTitle = ""
     var submitButtonTitle = ""
