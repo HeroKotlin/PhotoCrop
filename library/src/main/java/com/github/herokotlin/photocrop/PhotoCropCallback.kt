@@ -9,4 +9,6 @@ interface PhotoCropCallback {
 
     fun onSubmit(activity: Activity, cropFile: CropFile)
 
+    fun onExit(activity: Activity)
+
 }

@@ -129,7 +129,7 @@ class PhotoCropActivity: AppCompatActivity() {
 
     override fun onDestroy() {
         if (!isSubmitClicked && !isCancelClicked) {
-            callback.onCancel(this)
+            callback.onExit(this)
         }
         super.onDestroy()
     }
