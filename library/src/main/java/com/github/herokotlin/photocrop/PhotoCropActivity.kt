@@ -3,7 +3,6 @@ package com.github.herokotlin.photocrop
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -31,6 +30,9 @@ class PhotoCropActivity: AppCompatActivity() {
 
     }
 
+    private var isSubmitClicked = false
+    private var isCancelClicked = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -49,6 +51,7 @@ class PhotoCropActivity: AppCompatActivity() {
         photoCrop.init(configuration)
 
         cancelButton.setOnClickListener {
+            isCancelClicked = true;
             callback.onCancel(this)
         }
 
@@ -77,6 +80,7 @@ class PhotoCropActivity: AppCompatActivity() {
                     photoCrop.save(bitmap)?.let {
                         photoCrop.compress(it)?.let {
                             handler.post {
+                                isSubmitClicked = true;
                                 callback.onSubmit(this, it)
                             }
                         }
@@ -123,4 +127,10 @@ class PhotoCropActivity: AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        if (!isSubmitClicked && !isCancelClicked) {
+            callback.onCancel(this)
+        }
+        super.onDestroy()
+    }
 }
