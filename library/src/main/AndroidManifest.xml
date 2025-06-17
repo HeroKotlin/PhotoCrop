@@ -6,8 +6,7 @@
     <application>
         <activity
                 android:name=".PhotoCropActivity"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                android:screenOrientation="portrait">
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
     </application>
 

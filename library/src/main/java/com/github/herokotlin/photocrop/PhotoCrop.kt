@@ -19,6 +19,8 @@ import kotlin.math.abs
 
 class PhotoCrop: FrameLayout {
 
+    lateinit var binding: PhotoCropBinding
+
     var image: Bitmap? = null
 
         set(value) {
@@ -171,7 +173,6 @@ class PhotoCrop: FrameLayout {
         init()
     }
 
-    lateinit var binding: PhotoCropBinding
     private fun init() {
 
         binding = PhotoCropBinding.inflate(LayoutInflater.from(context), this, true)
