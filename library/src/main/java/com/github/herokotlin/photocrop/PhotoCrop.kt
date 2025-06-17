@@ -11,11 +11,11 @@ import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.model.CropArea
 import com.github.herokotlin.photocrop.util.Util
 import com.github.herokotlin.photoview.PhotoView
-import kotlinx.android.synthetic.main.photo_crop.view.*
-import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 import android.view.animation.DecelerateInterpolator
+import com.github.herokotlin.photocrop.databinding.PhotoCropBinding
 import com.github.herokotlin.photocrop.model.CropFile
 import com.github.herokotlin.photocrop.util.Compressor
+import kotlin.math.abs
 
 class PhotoCrop: FrameLayout {
 
@@ -29,8 +29,8 @@ class PhotoCrop: FrameLayout {
 
             field = value
 
-            photoView.setImageBitmap(value)
-            foregroundView.imageView.setImageBitmap(value)
+            binding.photoView.setImageBitmap(value)
+            binding.foregroundView.binding.imageView.setImageBitmap(value)
 
         }
 
@@ -44,14 +44,14 @@ class PhotoCrop: FrameLayout {
 
             field = value
 
-            finderView.stopInteraction()
+            binding.finderView.stopInteraction()
 
-            var fromCropArea = finderView.cropArea
+            var fromCropArea = binding.finderView.cropArea
             var toCropArea = fromCropArea
 
             var toContentInset = PhotoView.ContentInset.zero
 
-            val fromScale = photoView.scale
+            val fromScale = binding.photoView.scale
             var toScale = fromScale
 
             var offsetCropArea = CropArea.zero
@@ -62,48 +62,48 @@ class PhotoCrop: FrameLayout {
 
             if (value) {
 
-                foregroundView.alpha = 1f
+                binding.foregroundView.alpha = 1f
 
-                photoView.scaleType = PhotoView.ScaleType.FILL
+                binding.photoView.scaleType = PhotoView.ScaleType.FILL
 
                 fromCropArea = getCropAreaByPhotoView()
-                toCropArea = finderView.normalizedCropArea
+                toCropArea = binding.finderView.normalizedCropArea
 
                 toContentInset = toCropArea.toContentInset()
 
                 reader = {
 
-                    toScale = photoView.scale
+                    toScale = binding.photoView.scale
 
                 }
 
-                val overlayFromAlpha = overlayView.alpha
+                val overlayFromAlpha = binding.overlayView.alpha
                 val overlayOffsetAlpha = configuration.overlayAlphaNormal - overlayFromAlpha
 
 
                 animation = {
 
-                    overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
-                    finderView.alpha = it
+                    binding.overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
+                    binding.finderView.alpha = it
 
-                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
+                    binding.finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
 
                 }
 
                 complete = {
-                    photoView.updateLimitScale()
+                    binding.photoView.updateLimitScale()
                 }
 
             }
             else {
 
-                gridView.alpha = 0f
+                binding.gridView.alpha = 0f
 
-                photoView.scaleType = PhotoView.ScaleType.FIT
+                binding.photoView.scaleType = PhotoView.ScaleType.FIT
 
                 reader = {
 
-                    toScale = photoView.scale
+                    toScale = binding.photoView.scale
 
                     toCropArea = getCropAreaByPhotoView()
 
@@ -111,44 +111,44 @@ class PhotoCrop: FrameLayout {
 
                 animation = {
 
-                    overlayView.alpha = 1 - it
-                    finderView.alpha = 1 - it
+                    binding.overlayView.alpha = 1 - it
+                    binding.finderView.alpha = 1 - it
 
-                    finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
+                    binding.finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
 
                 }
 
                 complete = {
-                    photoView.updateLimitScale()
-                    foregroundView.alpha = 0f
+                    binding.photoView.updateLimitScale()
+                    binding.foregroundView.alpha = 0f
                 }
 
             }
 
-            photoView.keep {
-                photoView.contentInset = toContentInset
+            binding.photoView.keep {
+                binding.photoView.contentInset = toContentInset
             }
 
-            photoView.temp(
+            binding.photoView.temp(
                 { baseMatrix, changeMatrix ->
-                    photoView.resetMatrix(baseMatrix, changeMatrix)
+                    binding.photoView.resetMatrix(baseMatrix, changeMatrix)
                 },
                 reader
             )
 
-            finderView.cropArea = fromCropArea
+            binding.finderView.cropArea = fromCropArea
 
             offsetCropArea = toCropArea.minus(fromCropArea)
 
             startAnimation(
-                photoView.zoomDuration,
-                photoView.zoomInterpolator,
+                binding.photoView.zoomDuration,
+                binding.photoView.zoomInterpolator,
                 animation,
                 complete
             )
 
-            photoView.setFocusPoint(width / 2f, height / 2f)
-            photoView.startZoomAnimation(fromScale, toScale)
+            binding.photoView.setFocusPoint(width / 2f, height / 2f)
+            binding.photoView.startZoomAnimation(fromScale, toScale)
 
         }
 
@@ -171,54 +171,55 @@ class PhotoCrop: FrameLayout {
         init()
     }
 
+    lateinit var binding: PhotoCropBinding
     private fun init() {
 
-        LayoutInflater.from(context).inflate(R.layout.photo_crop, this)
+        binding = PhotoCropBinding.inflate(LayoutInflater.from(context), this, true)
 
-        finderView.onCropAreaChange = {
-            val rect = finderView.cropArea.toRect(width, height)
-            Util.updateView(foregroundView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
-            Util.updateView(gridView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
-            foregroundView.updateImageOrigin()
+        binding.finderView.onCropAreaChange = {
+            val rect = binding.finderView.cropArea.toRect(width, height)
+            Util.updateView(binding.foregroundView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
+            Util.updateView(binding.gridView, rect.left, rect.top, rect.width().toInt(), rect.height().toInt())
+            binding.foregroundView.updateImageOrigin()
         }
-        finderView.onCropAreaResize = {
-            updateCropArea(finderView.normalizedCropArea)
+        binding.finderView.onCropAreaResize = {
+            updateCropArea(binding.finderView.normalizedCropArea)
         }
-        finderView.onInteractionStart = {
+        binding.finderView.onInteractionStart = {
             updateInteractionState(configuration.overlayAlphaInteractive, 1f)
             onInteractionStart?.invoke()
         }
-        finderView.onInteractionEnd = {
+        binding.finderView.onInteractionEnd = {
             updateInteractionState(configuration.overlayAlphaNormal, 0f)
             onInteractionEnd?.invoke()
         }
 
-        photoView.scaleType = PhotoView.ScaleType.FIT
-        photoView.onScaleChange = {
-            if (finderView.alpha > 0) {
+        binding.photoView.scaleType = PhotoView.ScaleType.FIT
+        binding.photoView.onScaleChange = {
+            if (binding.finderView.alpha > 0) {
                 updateFinderMinSize()
             }
-            if (foregroundView.alpha > 0) {
-                foregroundView.updateImageSize()
+            if (binding.foregroundView.alpha > 0) {
+                binding.foregroundView.updateImageSize()
             }
         }
-        photoView.onOriginChange = {
-            if (foregroundView.alpha > 0) {
-                foregroundView.updateImageOrigin()
+        binding.photoView.onOriginChange = {
+            if (binding.foregroundView.alpha > 0) {
+                binding.foregroundView.updateImageOrigin()
             }
        }
-        photoView.onReset = {
-            if (foregroundView.alpha > 0) {
-                foregroundView.updateImageSize()
-                foregroundView.updateImageOrigin()
+        binding.photoView.onReset = {
+            if (binding.foregroundView.alpha > 0) {
+                binding.foregroundView.updateImageSize()
+                binding.foregroundView.updateImageOrigin()
             }
         }
 
-        foregroundView.photoView = photoView
+        binding.foregroundView.photoView = binding.photoView
 
-        photoView.setOnTouchListener { _, _ ->
+        binding.photoView.setOnTouchListener { _, _ ->
             if (isCropping && activeAnimator == null) {
-                finderView.addInteractionTimer()
+                binding.finderView.addInteractionTimer()
             }
             false
         }
@@ -231,25 +232,25 @@ class PhotoCrop: FrameLayout {
 
         val density = resources.displayMetrics.density
 
-        finderView.cropRatio = configuration.cropWidth / configuration.cropHeight
-        finderView.maxWidth = configuration.finderMaxWidth * density
-        finderView.maxHeight = configuration.finderMaxHeight * density
+        binding.finderView.cropRatio = configuration.cropWidth / configuration.cropHeight
+        binding.finderView.maxWidth = configuration.finderMaxWidth * density
+        binding.finderView.maxHeight = configuration.finderMaxHeight * density
 
     }
 
     fun reset() {
 
-        val fromScale = photoView.scale
+        val fromScale = binding.photoView.scale
         var toScale = fromScale
 
-        photoView.temp({ baseMatrix, changeMatrix ->
-            photoView.resetMatrix(baseMatrix, changeMatrix)
+        binding.photoView.temp({ baseMatrix, changeMatrix ->
+            binding.photoView.resetMatrix(baseMatrix, changeMatrix)
         }) {
-            toScale = photoView.scale
+            toScale = binding.photoView.scale
         }
 
-        photoView.setFocusPoint(width / 2f, height / 2f)
-        photoView.startZoomAnimation(fromScale, toScale)
+        binding.photoView.setFocusPoint(width / 2f, height / 2f)
+        binding.photoView.startZoomAnimation(fromScale, toScale)
 
     }
 
@@ -269,16 +270,16 @@ class PhotoCrop: FrameLayout {
 
         return image?.let {
 
-            foregroundView.save()
+            binding.foregroundView.save()
 
             val source = it
             val sourceWidth = source.width
             val sourceHeight = source.height
 
-            val x = Math.abs(foregroundView.relativeX) * sourceWidth
-            val y = Math.abs(foregroundView.relativeY) * sourceHeight
-            val width = foregroundView.relativeWidth * sourceWidth
-            val height = foregroundView.relativeHeight * sourceHeight
+            val x = abs(binding.foregroundView.relativeX) * sourceWidth
+            val y = abs(binding.foregroundView.relativeY) * sourceHeight
+            val width = binding.foregroundView.relativeWidth * sourceWidth
+            val height = binding.foregroundView.relativeHeight * sourceHeight
 
             Bitmap.createBitmap(
                 source,
@@ -326,7 +327,7 @@ class PhotoCrop: FrameLayout {
         }
         animator.addListener(object: AnimatorListenerAdapter() {
             // 动画被取消，onAnimationEnd() 也会被调用
-            override fun onAnimationEnd(animation: android.animation.Animator?) {
+            override fun onAnimationEnd(animation: android.animation.Animator) {
                 complete?.invoke()
                 if (animation == activeAnimator) {
                     activeAnimator = null
@@ -350,12 +351,12 @@ class PhotoCrop: FrameLayout {
         // 1. 裁剪框不能小于 finderMinWidth/finderMinHeight
         // 2. 裁剪后的图片不能小余 cropWidth/cropHeight
 
-        val normalizedRect = finderView.normalizedCropArea.toRect(width, height)
+        val normalizedRect = binding.finderView.normalizedCropArea.toRect(width, height)
         val normalizedWidth = normalizedRect.width()
         val normalizedHeight = normalizedRect.height()
 
         // 这是裁剪框能缩放的最小尺寸
-        val scaleFactor = photoView.maxScale / photoView.scale
+        val scaleFactor = binding.photoView.maxScale / binding.photoView.scale
         val finderWidth = Math.max(normalizedWidth / scaleFactor, finderMinWidth)
         val finderHeight = Math.max(normalizedHeight / scaleFactor, finderMinHeight)
 
@@ -370,22 +371,22 @@ class PhotoCrop: FrameLayout {
 //            finderHeight = cropHeight / scaleFactor
 //        }
 
-        finderView.minWidth = finderWidth
-        finderView.minHeight = finderHeight
+        binding.finderView.minWidth = finderWidth
+        binding.finderView.minHeight = finderHeight
 
     }
 
     // CropArea 完全覆盖 PhotoView
     private fun getCropAreaByPhotoView(): CropArea {
 
-        val imageOrigin = photoView.imageOrigin
-        val imageSize = photoView.imageSize
+        val imageOrigin = binding.photoView.imageOrigin
+        val imageSize = binding.photoView.imageSize
 
         val left = Math.max(imageOrigin.x, 0f)
         val top = Math.max(imageOrigin.y, 0f)
 
-        val right = Math.max(photoView.width - (imageOrigin.x + imageSize.width), 0f)
-        val bottom = Math.max(photoView.height - (imageOrigin.y + imageSize.height), 0f)
+        val right = Math.max(binding.photoView.width - (imageOrigin.x + imageSize.width), 0f)
+        val bottom = Math.max(binding.photoView.height - (imageOrigin.y + imageSize.height), 0f)
 
         return CropArea(top, left, bottom, right)
 
@@ -393,7 +394,7 @@ class PhotoCrop: FrameLayout {
 
     private fun updateCropArea(cropArea: CropArea) {
 
-        val fromCropArea = finderView.cropArea
+        val fromCropArea = binding.finderView.cropArea
         val toCropArea = cropArea
 
         val fromRect = fromCropArea.toRect(width, height)
@@ -410,55 +411,55 @@ class PhotoCrop: FrameLayout {
 
         val offsetCropArea = toCropArea.minus(fromCropArea)
 
-        val fromScale = photoView.scale
+        val fromScale = binding.photoView.scale
         val toScale = fromScale * scale
 
         // 设置缩放焦点
-        photoView.setFocusPoint(fromRect.centerX(), fromRect.centerY())
+        binding.photoView.setFocusPoint(fromRect.centerX(), fromRect.centerY())
 
 
 
         // 获取偏移量
-        foregroundView.save()
+        binding.foregroundView.save()
 
-        finderView.cropArea = toCropArea
-        photoView.zoom(toScale / fromScale, true)
+        binding.finderView.cropArea = toCropArea
+        binding.photoView.zoom(toScale / fromScale, true)
 
-        val translate = foregroundView.restore()
+        val translate = binding.foregroundView.restore()
 
 
 
         // 开始动画
-        finderView.cropArea = fromCropArea
-        photoView.zoom(fromScale / toScale, true)
+        binding.finderView.cropArea = fromCropArea
+        binding.photoView.zoom(fromScale / toScale, true)
 
         startAnimation(
-            photoView.zoomDuration,
-            photoView.zoomInterpolator,
+            binding.photoView.zoomDuration,
+            binding.photoView.zoomInterpolator,
             {
-                finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
+                binding.finderView.cropArea = fromCropArea.add(offsetCropArea.multiply(it))
             }
         )
 
-        photoView.startZoomAnimation(fromScale, toScale)
-        photoView.startTranslateAnimation(translate.x, translate.y, photoView.zoomInterpolator)
+        binding.photoView.startZoomAnimation(fromScale, toScale)
+        binding.photoView.startTranslateAnimation(translate.x, translate.y, binding.photoView.zoomInterpolator)
 
     }
 
     private fun updateInteractionState(overlayAlpha: Float, gridAlpha: Float) {
 
-        val overlayFromAlpha = overlayView.alpha
+        val overlayFromAlpha = binding.overlayView.alpha
         val overlayOffsetAlpha = overlayAlpha - overlayFromAlpha
 
-        val gridFromAlpha = gridView.alpha
+        val gridFromAlpha = binding.gridView.alpha
         val gridOffsetAlpha = gridAlpha - gridFromAlpha
 
         startAnimation(
             500,
             DecelerateInterpolator(),
             {
-                overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
-                gridView.alpha = gridFromAlpha + it * gridOffsetAlpha
+                binding.overlayView.alpha = overlayFromAlpha + it * overlayOffsetAlpha
+                binding.gridView.alpha = gridFromAlpha + it * gridOffsetAlpha
             }
         )
 

@@ -5,13 +5,13 @@ import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import com.github.herokotlin.photocrop.R
+import com.github.herokotlin.photocrop.databinding.PhotoCropForegroundBinding
 import com.github.herokotlin.photocrop.util.Util
 import com.github.herokotlin.photoview.PhotoView
-import kotlinx.android.synthetic.main.photo_crop_foreground.view.*
 
 internal class ForegroundView: FrameLayout {
 
+    lateinit var binding: PhotoCropForegroundBinding
     lateinit var photoView: PhotoView
 
     var relativeX = 0f
@@ -36,23 +36,23 @@ internal class ForegroundView: FrameLayout {
     }
 
     private fun init() {
-        LayoutInflater.from(context).inflate(R.layout.photo_crop_foreground, this)
+        binding = PhotoCropForegroundBinding.inflate(LayoutInflater.from(context), this)
     }
 
     fun updateImageSize() {
         imageSize = photoView.imageSize
-        Util.updateSize(imageView, imageSize.width.toInt(), imageSize.height.toInt())
+        Util.updateSize(binding.imageView, imageSize.width.toInt(), imageSize.height.toInt())
     }
 
     fun updateImageOrigin() {
         val origin = photoView.imageOrigin
-        Util.updateOrigin(imageView, origin.x - x, origin.y - y)
+        Util.updateOrigin(binding.imageView, origin.x - x, origin.y - y)
     }
 
     fun save() {
 
-        relativeX = imageView.x / imageSize.width
-        relativeY = imageView.y / imageSize.height
+        relativeX = binding.imageView.x / imageSize.width
+        relativeY = binding.imageView.y / imageSize.height
 
         relativeWidth = width / imageSize.width
         relativeHeight = height / imageSize.height
@@ -64,7 +64,7 @@ internal class ForegroundView: FrameLayout {
         val newX = imageSize.width * relativeX
         val newY = imageSize.height * relativeY
 
-        return PointF(newX - imageView.x, newY - imageView.y)
+        return PointF(newX - binding.imageView.x, newY - binding.imageView.y)
 
     }
 

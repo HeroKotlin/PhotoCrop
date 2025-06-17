@@ -10,11 +10,13 @@ import android.view.ViewConfiguration
 import android.widget.FrameLayout
 
 import com.github.herokotlin.photocrop.R
+import com.github.herokotlin.photocrop.databinding.PhotoCropFinderBinding
 import com.github.herokotlin.photocrop.model.CropArea
 import com.github.herokotlin.photocrop.util.Util
-import kotlinx.android.synthetic.main.photo_crop_finder.view.*
 
 internal class FinderView: FrameLayout, View.OnTouchListener {
+
+    lateinit var binding: PhotoCropFinderBinding
 
     lateinit var onCropAreaChange: () -> Unit
     lateinit var onCropAreaResize: () -> Unit
@@ -110,12 +112,12 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
     private fun init() {
 
-        LayoutInflater.from(context).inflate(R.layout.photo_crop_finder, this)
+        binding = PhotoCropFinderBinding.inflate(LayoutInflater.from(context), this)
 
-        topLeftButton.setOnTouchListener(this)
-        topRightButton.setOnTouchListener(this)
-        bottomLeftButton.setOnTouchListener(this)
-        bottomRightButton.setOnTouchListener(this)
+        binding.topLeftButton.setOnTouchListener(this)
+        binding.topRightButton.setOnTouchListener(this)
+        binding.bottomLeftButton.setOnTouchListener(this)
+        binding.bottomRightButton.setOnTouchListener(this)
 
         update()
 
@@ -137,7 +139,7 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
             MotionEvent.ACTION_DOWN -> {
 
                 if (resizeCropAreaTimer != null
-                    || (view != topLeftButton && view != topRightButton && view != bottomLeftButton && view != bottomRightButton)
+                    || (view != binding.topLeftButton && view != binding.topRightButton && view != binding.bottomLeftButton && view != binding.bottomRightButton)
                 ) {
                     return false
                 }
@@ -171,19 +173,19 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
                     val maxRight = viewWidth - normalizedCropArea.right
 
                     when (view) {
-                        topLeftButton -> {
+                        binding.topLeftButton -> {
                             left = Math.min(right - minWidth, Math.max(maxLeft, left + offsetX))
                             top = bottom - (right - left) / cropRatio
                         }
-                        topRightButton -> {
+                        binding.topRightButton -> {
                             right = Math.min(maxRight, Math.max(left + minWidth, right + offsetX))
                             top = bottom - (right - left) / cropRatio
                         }
-                        bottomLeftButton -> {
+                        binding.bottomLeftButton -> {
                             left = Math.min(right - minWidth, Math.max(maxLeft, left + offsetX))
                             bottom = top + (right - left) / cropRatio
                         }
-                        bottomRightButton -> {
+                        binding.bottomRightButton -> {
                             right = Math.min(maxRight, Math.max(left + minWidth, right + offsetX))
                             bottom = top + (right - left) / cropRatio
                         }
@@ -296,26 +298,26 @@ internal class FinderView: FrameLayout, View.OnTouchListener {
 
         val halfButtonSize = cornerButtonSize / 2
 
-        Util.updateView(topBorder, left, top - borderWidth, (right - left).toInt(), borderWidth)
-        Util.updateView(rightBorder, right, top, borderWidth, (bottom - top).toInt())
-        Util.updateView(bottomBorder, left, bottom, (right - left).toInt(), borderWidth)
-        Util.updateView(leftBorder, left - borderWidth, top, borderWidth, (bottom - top).toInt())
+        Util.updateView(binding.topBorder, left, top - borderWidth, (right - left).toInt(), borderWidth)
+        Util.updateView(binding.rightBorder, right, top, borderWidth, (bottom - top).toInt())
+        Util.updateView(binding.bottomBorder, left, bottom, (right - left).toInt(), borderWidth)
+        Util.updateView(binding.leftBorder, left - borderWidth, top, borderWidth, (bottom - top).toInt())
 
-        Util.updateOrigin(topLeftButton, left - cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
-        Util.updateOrigin(topLeftHorizontalLine, left - cornerLineWidth, top - cornerLineWidth)
-        Util.updateOrigin(topLeftVerticalLine, left - cornerLineWidth, top - cornerLineWidth)
+        Util.updateOrigin(binding.topLeftButton, left - cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(binding.topLeftHorizontalLine, left - cornerLineWidth, top - cornerLineWidth)
+        Util.updateOrigin(binding.topLeftVerticalLine, left - cornerLineWidth, top - cornerLineWidth)
 
-        Util.updateOrigin(topRightButton, right + cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
-        Util.updateOrigin(topRightHorizontalLine, right + cornerLineWidth - cornerLineSize, top - cornerLineWidth)
-        Util.updateOrigin(topRightVerticalLine, right, top - cornerLineWidth)
+        Util.updateOrigin(binding.topRightButton, right + cornerLineWidth - halfButtonSize, top - cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(binding.topRightHorizontalLine, right + cornerLineWidth - cornerLineSize, top - cornerLineWidth)
+        Util.updateOrigin(binding.topRightVerticalLine, right, top - cornerLineWidth)
 
-        Util.updateOrigin(bottomRightButton, right + cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
-        Util.updateOrigin(bottomRightHorizontalLine, right + cornerLineWidth - cornerLineSize, bottom)
-        Util.updateOrigin(bottomRightVerticalLine, right, bottom + cornerLineWidth - cornerLineSize)
+        Util.updateOrigin(binding.bottomRightButton, right + cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(binding.bottomRightHorizontalLine, right + cornerLineWidth - cornerLineSize, bottom)
+        Util.updateOrigin(binding.bottomRightVerticalLine, right, bottom + cornerLineWidth - cornerLineSize)
 
-        Util.updateOrigin(bottomLeftButton, left - cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
-        Util.updateOrigin(bottomLeftHorizontalLine, left - cornerLineWidth, bottom)
-        Util.updateOrigin(bottomLeftVerticalLine, left - cornerLineWidth, bottom + cornerLineWidth - cornerLineSize)
+        Util.updateOrigin(binding.bottomLeftButton, left - cornerLineWidth - halfButtonSize, bottom + cornerLineWidth - halfButtonSize)
+        Util.updateOrigin(binding.bottomLeftHorizontalLine, left - cornerLineWidth, bottom)
+        Util.updateOrigin(binding.bottomLeftVerticalLine, left - cornerLineWidth, bottom + cornerLineWidth - cornerLineSize)
 
     }
 

@@ -5,9 +5,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.github.herokotlin.photocrop.R
-import kotlinx.android.synthetic.main.photo_crop_grid.view.*
+import com.github.herokotlin.photocrop.databinding.PhotoCropGridBinding
 
 internal class GridView: FrameLayout {
+
+    lateinit var binding: PhotoCropGridBinding
 
     private val lineWidth: Int by lazy {
         resources.getDimensionPixelSize(R.dimen.photo_crop_grid_line_width)
@@ -26,7 +28,7 @@ internal class GridView: FrameLayout {
     }
 
     private fun init() {
-        LayoutInflater.from(context).inflate(R.layout.photo_crop_grid, this)
+        binding = PhotoCropGridBinding.inflate(LayoutInflater.from(context), this)
         update()
     }
 
@@ -41,8 +43,8 @@ internal class GridView: FrameLayout {
             return
         }
 
-        val horizontalLines = listOf(horizontalLine1, horizontalLine2)
-        val verticalLines = listOf(verticalLine1, verticalLine2)
+        val horizontalLines = listOf(binding.horizontalLine1, binding.horizontalLine2)
+        val verticalLines = listOf(binding.verticalLine1, binding.verticalLine2)
 
         val rowSpacing = height / (horizontalLines.count() + 1)
         val columnSpacing = width / (verticalLines.count() + 1)

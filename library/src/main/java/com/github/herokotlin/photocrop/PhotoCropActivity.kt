@@ -9,7 +9,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
-import kotlinx.android.synthetic.main.photo_crop_activity.*
+import androidx.core.view.WindowCompat
+import com.github.herokotlin.photocrop.databinding.PhotoCropActivityBinding
 
 class PhotoCropActivity: AppCompatActivity() {
 
@@ -37,48 +38,48 @@ class PhotoCropActivity: AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        var flags = View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            flags = flags or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        // >= 安卓15 关闭 edge-to-edge
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            WindowCompat.setDecorFitsSystemWindows(window, true)
         }
 
-        window.decorView.systemUiVisibility = flags
+        val binding = PhotoCropActivityBinding.inflate(layoutInflater)
 
         setContentView(R.layout.photo_crop_activity)
 
         val url = intent.getStringExtra(KEY_URL)
 
-        photoCrop.init(configuration)
+        binding.photoCrop.init(configuration)
 
-        cancelButton.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             isCancelClicked = true;
             callback.onCancel(this)
         }
 
-        resetButton.setOnClickListener {
-            photoCrop.reset()
+        binding.resetButton.setOnClickListener {
+            binding.photoCrop.reset()
         }
 
-        rotateButton.setOnClickListener {
-            photoCrop.rotate(-90f)
+        binding.rotateButton.setOnClickListener {
+            binding.photoCrop.rotate(-90f)
         }
 
-        photoCrop.onInteractionStart = {
-            rotateButton.visibility = View.GONE
+        binding.photoCrop.onInteractionStart = {
+            binding.rotateButton.visibility = View.GONE
         }
 
-        photoCrop.onInteractionEnd = {
-            rotateButton.visibility = View.VISIBLE
+        binding.photoCrop.onInteractionEnd = {
+            binding.rotateButton.visibility = View.VISIBLE
         }
 
-        submitButton.setOnClickListener {
+        binding.submitButton.setOnClickListener {
 
-            val bitmap = photoCrop.crop()
+            val bitmap = binding.photoCrop.crop()
             if (bitmap != null) {
                 val handler = Handler(Looper.getMainLooper())
                 Thread {
-                    photoCrop.save(bitmap)?.let {
-                        photoCrop.compress(it)?.let {
+                    binding.photoCrop.save(bitmap)?.let {
+                        binding.photoCrop.compress(it)?.let {
                             handler.post {
                                 isSubmitClicked = true;
                                 callback.onSubmit(this, it)
@@ -91,40 +92,41 @@ class PhotoCropActivity: AppCompatActivity() {
         }
 
         if (configuration.guideLabelTitle.isNotEmpty()) {
-            guideLabel.text = configuration.guideLabelTitle;
-            guideLabel.visibility = View.VISIBLE
+            binding.guideLabel.text = configuration.guideLabelTitle;
+            binding.guideLabel.visibility = View.VISIBLE
         }
         if (configuration.cancelButtonTitle.isNotEmpty()) {
-            cancelButton.text = configuration.cancelButtonTitle
+            binding.cancelButton.text = configuration.cancelButtonTitle
         }
         if (configuration.resetButtonTitle.isNotEmpty()) {
-            resetButton.text = configuration.resetButtonTitle
+            binding.resetButton.text = configuration.resetButtonTitle
         }
         if (configuration.submitButtonTitle.isNotEmpty()) {
-            submitButton.text = configuration.submitButtonTitle
+            binding.submitButton.text = configuration.submitButtonTitle
         }
 
         // 外面请求完权限再进来
-        loadImage(this, url) { image ->
-            if (image != null) {
+        url?.let {
+            loadImage(this, url) { image ->
+                if (image != null) {
 
-                // 回到主线程
-                photoCrop.post {
+                    // 回到主线程
+                    binding.photoCrop.post {
 
-                    photoCrop.image = image
+                        binding.photoCrop.image = image
 
-                    photoCrop.postDelayed({
-                        photoCrop.isCropping = true
-                        resetButton.visibility = View.VISIBLE
-                        submitButton.visibility = View.VISIBLE
-                        rotateButton.visibility = View.VISIBLE
-                    }, 500)
+                        binding.photoCrop.postDelayed({
+                            binding.photoCrop.isCropping = true
+                            binding.resetButton.visibility = View.VISIBLE
+                            binding.submitButton.visibility = View.VISIBLE
+                            binding.rotateButton.visibility = View.VISIBLE
+                        }, 500)
+
+                    }
 
                 }
-
             }
         }
-
     }
 
     override fun onDestroy() {
