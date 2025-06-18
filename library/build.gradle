@@ -44,9 +44,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "androidx.appcompat:appcompat:${safeExtGet('androidxVersion', '1.6.1')}"
-    implementation "androidx.core:core-ktx:${safeExtGet('androidxCoreVersion', '1.12.0')}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${safeExtGet('kotlinVersion', '2.0.21')}"
-    implementation 'com.github.herokotlin:PhotoView:0.2.8'
+    implementation 'com.github.herokotlin:PhotoView:0.3.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

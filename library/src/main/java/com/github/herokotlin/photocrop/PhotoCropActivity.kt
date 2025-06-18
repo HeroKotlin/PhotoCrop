@@ -5,8 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import androidx.core.view.WindowCompat
@@ -45,7 +43,7 @@ class PhotoCropActivity: AppCompatActivity() {
 
         val binding = PhotoCropActivityBinding.inflate(layoutInflater)
 
-        setContentView(R.layout.photo_crop_activity)
+        setContentView(binding.root)
 
         val url = intent.getStringExtra(KEY_URL)
 
@@ -76,11 +74,10 @@ class PhotoCropActivity: AppCompatActivity() {
 
             val bitmap = binding.photoCrop.crop()
             if (bitmap != null) {
-                val handler = Handler(Looper.getMainLooper())
                 Thread {
                     binding.photoCrop.save(bitmap)?.let {
                         binding.photoCrop.compress(it)?.let {
-                            handler.post {
+                            runOnUiThread {
                                 isSubmitClicked = true;
                                 callback.onSubmit(this, it)
                             }
@@ -110,9 +107,7 @@ class PhotoCropActivity: AppCompatActivity() {
             loadImage(this, url) { image ->
                 if (image != null) {
 
-                    // 回到主线程
-                    binding.photoCrop.post {
-
+                    runOnUiThread {
                         binding.photoCrop.image = image
 
                         binding.photoCrop.postDelayed({
@@ -121,7 +116,6 @@ class PhotoCropActivity: AppCompatActivity() {
                             binding.submitButton.visibility = View.VISIBLE
                             binding.rotateButton.visibility = View.VISIBLE
                         }, 500)
-
                     }
 
                 }
